@@ -1,6 +1,5 @@
 var myForm = document.getElementById('myForm');
 myForm.onsubmit = function (e) {
-    console.log('entro');
     // "e" es el evento JS que ocurre cuando enviamos el formulario
     // e.preventDefault() es un método que detiene la naturaleza predeterminada de JavaScript
     e.preventDefault();
