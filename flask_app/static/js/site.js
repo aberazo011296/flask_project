@@ -6,7 +6,7 @@ myForm.onsubmit = function (e) {
     // crea el objeto FormData desde JavaScript y envíalo a través de una solicitud post fetch
     var form = new FormData(myForm);
     // así es como configuramos una solicitud post y enviamos los datos del formulario
-    fetch("http://localhost:5000/register", {
+    fetch("http://54.205.156.15:5000/register", {
             method: 'POST',
             body: form
         })
