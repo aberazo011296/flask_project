@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta nombre="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/a7a9706bc8.js" crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+</head>
+<body>
+    <nav class="d-flex justify-content-between align-items-center col-12 my-5 mx-3">
+        <h1 class="text-center">Bienvenid@ {{user.nombre}}!!!</h1>
+        <div class="d-flex col-4">
+            <a href="/recipe/new" class="btn btn-primary m-1">Agregar Nueva Receta</a>
+            <a href="/logout" class="btn btn-info m-1">Logout</a>
+        </div>
+    </nav>
+
+    <div class="col-8 mx-auto">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Bajo 30 min</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for recipe in recipes %}
+                    <tr>
+                        <td>{{recipe.nombre}}</td>
+                        {% if recipe.bajotiempo == 1 %}
+                        <td>Sí</td>
+                        {% else %}
+                        <td>No</td>
+                        {% endif %}
+                        <td>
+                            <a href="/recipe/{{recipe.id}}" style="text-decoration:none">
+                                <button class="btn btn-sm btn-primary" type="button">
+                                    <i class="fa fa-eye"></i></button>
+                            </a>
+                            {% if recipe.usuario_id == session.user_id %}
+                            <a href="/recipe/edit/{{recipe.id}}" style="text-decoration:none">
+                                <button class="btn btn-sm btn-success" type="button">
+                                    <i class="fa fa-pencil"></i></button>
+                            </a>
+                            <a href="/recipe/destroy/{{recipe.id}}" style="text-decoration:none">
+                                <button class="btn btn-sm btn-danger" type="button">
+                                    <i class="fa fa-trash"></i></button>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
