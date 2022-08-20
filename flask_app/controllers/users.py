@@ -2,7 +2,7 @@ from flask import render_template, redirect, session, request, flash, jsonify, m
 import json
 from flask_app import app
 from flask_app.models.user import User
-from flask_app.models.recipe import Recipe
+from flask_app.models.viaje import Viaje
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
@@ -21,8 +21,7 @@ def create_user():
     
     data = {
         "nombre": request.form["nombre"],
-        "apellido" : request.form["apellido"],
-        "email" : request.form["email"],
+        "nombre_usuario" : request.form["nombre_usuario"],
         "password": bcrypt.generate_password_hash(request.form['password'])
     }
         
@@ -35,7 +34,7 @@ def create_user():
 
 @app.route('/login',methods=['POST'])
 def login():
-    user = User.user_by_email(request.form)
+    user = User.user_by_nombre_usuario(request.form)
 
     if not user:
         flash("Correo Incorrecto o Contraseña incorrecta","login")
@@ -49,7 +48,7 @@ def login():
 # @app.route('/login',methods=['POST'])
 # def login():
     
-#     user = User.user_by_email(request.form)
+#     user = User.user_by_nombre_usuario(request.form)
 
 #     if not user:
 #         return make_response(jsonify(
@@ -76,7 +75,13 @@ def dashboard():
     data ={
         'id': session['user_id']
     }
-    return render_template("dashboard.html",user=User.get_by_id(data),recipes=Recipe.get_all())
+    
+    user=User.get_by_id(data)
+    viajes=Viaje.get_all(data)
+    viajes_otros=Viaje.get_all_others(data)
+    
+    return render_template("dashboard.html",user=user,viajes=viajes,viajes_otros=viajes_otros)
+
 
 @app.route('/logout')
 def logout():

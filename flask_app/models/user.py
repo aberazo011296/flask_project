@@ -1,20 +1,18 @@
 from flask_app.config.mysqlconnection import connectToMySQL
 import re	# the regex module
 # create a regular expression object that we'll use later   
-EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 PASSWORD_REGEX = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,18}$")
 from flask import flash
 import json
 
 class User:
     
-    db_name = 'recetas'
+    db_name = 'viajes'
     
     def __init__( self , data ):
         self.id = data['id']
         self.nombre = data['nombre']
-        self.apellido = data['apellido']
-        self.email = data['email']
+        self.nombre_usuario = data['nombre_usuario']
         self.password = data['password']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
@@ -31,7 +29,7 @@ class User:
     
     @classmethod
     def save(cls, data):
-        query = "INSERT INTO usuarios ( nombre, apellido, email, password ) VALUES ( %(nombre)s, %(apellido)s, %(email)s, %(password)s );"
+        query = "INSERT INTO usuarios ( nombre, nombre_usuario, password ) VALUES ( %(nombre)s, %(nombre_usuario)s, %(password)s );"
         return connectToMySQL(cls.db_name).query_db( query, data )
     
     @classmethod
@@ -41,12 +39,22 @@ class User:
         return cls(result[0])
     
     @classmethod
-    def user_by_email(cls, data):
-        query  = "SELECT * FROM usuarios WHERE email = %(email)s";
+    def user_by_nombre_usuario(cls, data):
+        query  = "SELECT * FROM usuarios WHERE nombre_usuario = %(nombre_usuario)s";
         result = connectToMySQL(cls.db_name).query_db(query,data)
         if len(result) < 1:
             return False
         return cls(result[0])
+    
+    @classmethod
+    def get_by_viaje_otros(cls,data):
+        query = "SELECT * FROM usuarios WHERE id IN ( SELECT usuario_id FROM usuarios_viajes WHERE viaje_id = %(viaje_id)s ) AND id != %(usuario_id)s;"
+        results = connectToMySQL(cls.db_name).query_db(query,data)
+        usuarios = []
+        for row in results:
+            usuarios.append(cls(row))
+        print(usuarios)
+        return usuarios
 
     @staticmethod
     def validate_register(user):
@@ -57,29 +65,17 @@ class User:
         status = 'ok'
         code = 200
         
-        query = "SELECT * FROM usuarios WHERE email = %(email)s;"
+        query = "SELECT * FROM usuarios WHERE nombre_usuario = %(nombre_usuario)s;"
         results = connectToMySQL(User.db_name).query_db(query,user)
         
         if len(results) >= 1:
-            mensaje = "Ya existe este email."
-            is_valid=False
-            status = 'error'
-            code = 400
-            
-        if not EMAIL_REGEX.match(user['email']):
-            mensaje = "Email no válido"
+            mensaje = "Ya existe este nombre_usuario."
             is_valid=False
             status = 'error'
             code = 400
 
         if len(user['nombre']) < 3:
             mensaje = "Nombre debe tener por lo menos 3 caracteres"
-            is_valid= False
-            status = 'error'
-            code = 400
-
-        if len(user['apellido']) < 3:
-            mensaje = "Apellido debe tener por lo menos 3 caracteres"
             is_valid= False
             status = 'error'
             code = 400

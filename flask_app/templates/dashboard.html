@@ -15,44 +15,74 @@
     <nav class="d-flex justify-content-between align-items-center col-12 my-5 mx-3">
         <h1 class="text-center">Bienvenid@ {{user.nombre}}!!!</h1>
         <div class="d-flex col-4">
-            <a href="/recipe/new" class="btn btn-primary m-1">Agregar Nueva Receta</a>
+            <a href="/viaje/new" class="btn btn-primary m-1">Agregar Viaje</a>
             <a href="/logout" class="btn btn-info m-1">Logout</a>
         </div>
     </nav>
 
     <div class="col-8 mx-auto">
+        <h2 class="text-primary">Tus Horarios de Viaje</h2>
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Bajo 30 min</th>
+                    <th>Destino</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Plan</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                {% for recipe in recipes %}
+                {% for viaje in viajes %}
                     <tr>
-                        <td>{{recipe.nombre}}</td>
-                        {% if recipe.bajotiempo == 1 %}
-                        <td>Sí</td>
-                        {% else %}
-                        <td>No</td>
-                        {% endif %}
+                        <td>{{viaje.destino}}</td>
+                        <td>{{viaje.fecha_inicio.strftime('%d %B %Y')}}</td>
+                        <td>{{viaje.fecha_fin.strftime('%d %B %Y')}}</td>
+                        <td>{{viaje.plan}}</td>
                         <td>
-                            <a href="/recipe/{{recipe.id}}" style="text-decoration:none">
+                            <a href="/viaje/{{viaje.id}}" style="text-decoration:none">
                                 <button class="btn btn-sm btn-primary" type="button">
                                     <i class="fa fa-eye"></i></button>
                             </a>
-                            {% if recipe.usuario_id == session.user_id %}
-                            <a href="/recipe/edit/{{recipe.id}}" style="text-decoration:none">
-                                <button class="btn btn-sm btn-success" type="button">
-                                    <i class="fa fa-pencil"></i></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-8 mx-auto">
+        <h2 class="text-primary">Horarios de Viajes de Otros</h2>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Destino</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Plan</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for viaje_otros in viajes_otros %}
+                    <tr>
+                        <td>{{viaje_otros.nombre}}</td>
+                        <td>{{viaje_otros.destino}}</td>
+                        <td>{{viaje_otros.fecha_inicio.strftime('%d %B %Y')}}</td>
+                        <td>{{viaje_otros.fecha_fin.strftime('%d %B %Y')}}</td>
+                        <td>{{viaje_otros.plan}}</td>
+                        <td>
+                            <a href="/viaje/{{viaje_otros.id}}" style="text-decoration:none">
+                                <button class="btn btn-sm btn-primary" type="button">
+                                    <i class="fa fa-eye"></i></button>
                             </a>
-                            <a href="/recipe/destroy/{{recipe.id}}" style="text-decoration:none">
-                                <button class="btn btn-sm btn-danger" type="button">
-                                    <i class="fa fa-trash"></i></button>
+                            <a style="text-decoration:none">
+                                <form action="/viaje/join" method="post">
+                                    <input type="hidden" name="viaje_id" value={{viaje_otros.id}}>
+                                    <input type="submit" value="Unirse" class="btn btn-primary my-1">
+                                </form>
                             </a>
-                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
