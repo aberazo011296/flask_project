@@ -11,6 +11,10 @@ app.secret_key = 'keep it secret, keep it safe'
 def index():
     return render_template("login.html")
 
+@app.route("/registro")
+def registro():
+    return render_template("register.html")
+
 @app.route('/register', methods=['POST'])
 def create_user():
     
@@ -80,7 +84,7 @@ def dashboard():
     viajes=Viaje.get_all(data)
     viajes_otros=Viaje.get_all_others(data)
     
-    return render_template("dashboard.html",user=user,viajes=viajes,viajes_otros=viajes_otros)
+    return render_template("index.html",user=user,viajes=viajes,viajes_otros=viajes_otros)
 
 
 @app.route('/logout')
