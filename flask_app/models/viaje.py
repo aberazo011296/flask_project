@@ -69,6 +69,11 @@ class Viaje:
     def update(cls, data):
         query = "UPDATE viajes SET pasajero_identificacion = %(pasajero_identificacion)s, pasajero_nombre = %(pasajero_nombre)s, descripcion = %(descripcion)s WHERE id = %(id)s;"
         return connectToMySQL(cls.db_destino).query_db( query, data )
+    
+    @classmethod
+    def delete(cls, data):
+        query  = "DELETE FROM viajes WHERE id = %(id)s"
+        return connectToMySQL(cls.db_destino).query_db( query, data )
 
     @staticmethod
     def validate_viaje(viaje):

@@ -132,8 +132,9 @@ def destroy_viaje(id):
         return redirect('/logout')
     data = {
         "id":id
-    }
-    Viaje.destroy(data)
+    }   
+    Tramos.delete(data)
+    Viaje.delete(data)
     return redirect('/dashboard')
 
 @app.route('/viajes-anuales')

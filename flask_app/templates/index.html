@@ -49,10 +49,6 @@
                                     <a class="nav-link" href="/viaje/new">Viajes</a>
                                 </nav>
                             </div>
-                            <a class="nav-link" href="charts.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
-                                Usuarios
-                            </a>
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
@@ -141,15 +137,12 @@
                                                     <td>{{viaje.km_total}}</td>
                                                     <td>{{viaje.co2_total}}</td>
                                                     <td>
-                                                        <a href="/viaje/{{viaje.id}}" style="text-decoration:none">
-                                                            <button class="btn btn-sm btn-primary" type="button">
-                                                                <i class="fa fa-eye"></i></button>
-                                                        </a>
+                                                        
                                                         <a href="/viaje/{{viaje.id}}/editar" style="text-decoration:none">
                                                             <button class="btn btn-sm btn-info" type="button">
                                                                 <i class="fa fa-edit"></i></button>
                                                         </a>
-                                                        <a href="/viaje/{{viaje.id}}/eliminar" style="text-decoration:none">
+                                                        <a href="/viaje/destroy/{{viaje.id}}" style="text-decoration:none">
                                                             <button class="btn btn-sm btn-danger" type="button">
                                                                 <i class="fa fa-trash"></i></button>
                                                         </a>
