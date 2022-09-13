@@ -1,101 +1,88 @@
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask import flash
-import time
 
 class Viaje:
-    db_destino = 'viajes'
+    db_destino = 'hermes'
 
     def __init__(self,db_data):
         self.id = db_data['id']
-        self.destino = db_data['destino']
-        self.fecha_inicio = db_data['fecha_inicio']
-        self.fecha_fin = db_data['fecha_fin']
-        self.plan = db_data['plan']
+        self.pasajero_identificacion = db_data['pasajero_identificacion']
+        self.pasajero_nombre = db_data['pasajero_nombre']
+        self.descripcion = db_data['descripcion']
+        self.km_total = db_data['km_total']
+        self.co2_total = db_data['co2_total']
         self.created_at = db_data['created_at']
         self.updated_at = db_data['updated_at']
 
     @classmethod
     def save(cls,data):
-        query = "INSERT INTO viajes (destino, fecha_inicio, fecha_fin, plan) VALUES (%(destino)s,%(fecha_inicio)s,%(fecha_fin)s,%(plan)s);"
+        query = "INSERT INTO viajes (pasajero_identificacion, pasajero_nombre, descripcion, usuario_id) VALUES (%(pasajero_identificacion)s,%(pasajero_nombre)s,%(descripcion)s,%(usuario_id)s);"
         return connectToMySQL(cls.db_destino).query_db(query, data)
 
     @classmethod
     def get_all(cls,data):
-        query = "SELECT * FROM viajes WHERE viajes.id IN ( SELECT viaje_id FROM usuarios_viajes WHERE usuario_id = %(id)s );"
+        
+        query = "SELECT * FROM viajes;"
         results = connectToMySQL(cls.db_destino).query_db(query,data)
+        
         viajes = []
-        for row in results:
-            viajes.append(cls(row))
-        print(viajes)
+        
+        if len(results) >= 1:
+            for row in results:
+                viajes.append(cls(row))
+            print(viajes)
+            
         return viajes
     
     @classmethod
-    def get_all_others(cls,data):
-        query = "SELECT * FROM viajes LEFT JOIN usuarios_viajes ON viajes.id = usuarios_viajes.viaje_id LEFT JOIN usuarios ON usuarios.id = usuarios_viajes.usuario_id WHERE usuarios.id NOT IN (%(id)s) AND usuarios_viajes.viaje_id NOT IN (SELECT viaje_id FROM usuarios_viajes WHERE usuario_id = %(id)s);"
-        results = connectToMySQL(cls.db_destino).query_db(query,data)
-        viajes = []
-
-        for row in results:
-            if row['usuarios.id'] == None:
-                break
-            data = {
-                "id": row['id'],
-                "destino": row['destino'],
-                "fecha_inicio": row['fecha_inicio'],
-                "fecha_fin": row['fecha_fin'],
-                "plan": row['plan'],
-                "nombre": row['nombre'],
-                "created_at": row['created_at'],
-                "updated_at": row['updated_at']
-            }
-            
-            viajes.append(data)
-
-        return viajes
+    def get_all_count(cls,data):
+        query = "SELECT COUNT(*) FROM viajes"
+        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
+    
+    @classmethod
+    def get_all_co2_count(cls,data):
+        query = "SELECT SUM(co2_total) FROM viajes"
+        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
     
     @classmethod
     def get_one(cls,data):
         query = "SELECT * FROM viajes WHERE id = %(id)s;"
         results = connectToMySQL(cls.db_destino).query_db(query,data)
         return cls( results[0] )
+    
+    @classmethod
+    def get_month(cls,data):
+        query = "SELECT COUNT(*) FROM viajes WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s"
+        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
+    
+    @classmethod
+    def get_month_co2(cls,data):
+        query = "SELECT SUM(co2_total) FROM viajes WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s"
+        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
+    
+    @classmethod
+    def edit_totales(cls, data):
+        query = "UPDATE viajes SET km_total = %(km_total)s, co2_total = %(co2_total)s WHERE id = %(id)s"
+        return connectToMySQL(cls.db_destino).query_db( query, data )
+    
+    @classmethod
+    def update(cls, data):
+        query = "UPDATE viajes SET pasajero_identificacion = %(pasajero_identificacion)s, pasajero_nombre = %(pasajero_nombre)s, descripcion = %(descripcion)s WHERE id = %(id)s;"
+        return connectToMySQL(cls.db_destino).query_db( query, data )
 
     @staticmethod
     def validate_viaje(viaje):
         
         is_valid = True
         
-        if len(viaje['destino']) < 3:
+        if len(viaje['pasajero_identificacion']) < 3:
             is_valid = False
-            flash("Destino debe tener al menos 3 characters","viaje")
-        if len(viaje['plan']) < 3:
+            flash("Identificación debe tener al menos 3 characters","viaje")
+        if len(viaje['pasajero_nombre']) < 3:
             is_valid = False
-            flash("Plan debe tener al menos 3 characters","viaje")
-        if viaje['fecha_inicio'] == "":
+            flash("Nombre debe tener al menos 3 characters","viaje")
+        if len(viaje['descripcion']) < 3:
             is_valid = False
-            flash("Fecha Inicio es requerida","viaje")
-        if viaje['fecha_fin'] == "":
-            is_valid = False
-            flash("Fecha Fin es requerida","viaje")
-            
-        named_tuple = time.localtime() # get struct_time
-        time_string = time.strftime("%Y-%m-%d", named_tuple)
-        fecha_actual = time.strptime(time_string, "%Y-%m-%d")
-        fecha_inicio_time = time.strptime(str(viaje['fecha_inicio']), "%Y-%m-%d")
-        fecha_fin_time = time.strptime(str(viaje['fecha_fin']), "%Y-%m-%d")
-        
-        if fecha_actual >= fecha_fin_time:
-            is_valid = False
-            flash("Fecha Fin es menor o igual a la Fecha Actual","viaje")
-        if fecha_actual >= fecha_inicio_time:
-            is_valid = False
-            flash("Fecha Inicio es menor o igual a la Fecha Actual","viaje")
-        if fecha_inicio_time > fecha_fin_time:
-            is_valid = False
-            flash("Fecha Inicio es mayor a la Fecha Fin","viaje")
+            flash("Descripción debe tener al menos 3 characters","viaje")
             
         return is_valid
-    
-    @classmethod
-    def add_usuarios_viajes(cls,data):
-        query = "INSERT INTO usuarios_viajes (usuario_id,viaje_id) VALUES (%(usuario_id)s,%(viaje_id)s);"
-        return connectToMySQL(cls.db_destino).query_db(query,data);

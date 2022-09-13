@@ -26,7 +26,9 @@ def create_user():
     data = {
         "nombre": request.form["nombre"],
         "nombre_usuario" : request.form["nombre_usuario"],
-        "password": bcrypt.generate_password_hash(request.form['password'])
+        "password": bcrypt.generate_password_hash(request.form['password']),
+        "rol" : request.form["rol"],
+        "area" : request.form["area"]
     }
         
     id = User.save(data)
@@ -49,29 +51,6 @@ def login():
     session['user_id'] = user.id
     return redirect('/dashboard')
 
-# @app.route('/login',methods=['POST'])
-# def login():
-    
-#     user = User.user_by_nombre_usuario(request.form)
-
-#     if not user:
-#         return make_response(jsonify(
-#             status='error',
-#             message='Correo Incorrecto o Contraseña incorrecta'
-#             ), 404)
-        
-#     if not bcrypt.check_password_hash(user.password, request.form['password']):
-#         return make_response(jsonify(
-#             status='error',
-#             message='Correo Incorrecto o Contraseña incorrecta'
-#             ), 404)
-        
-#     session['user_id'] = user.id
-#     return make_response(jsonify(
-#             status='ok',
-#             message='Ingreso correcto'
-#             ), 200)
-
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
@@ -79,12 +58,13 @@ def dashboard():
     data ={
         'id': session['user_id']
     }
-    
+    viajes_total = 0.00
+    co2_total = 0.00
     user=User.get_by_id(data)
     viajes=Viaje.get_all(data)
-    viajes_otros=Viaje.get_all_others(data)
-    
-    return render_template("index.html",user=user,viajes=viajes,viajes_otros=viajes_otros)
+    viajes_total=Viaje.get_all_count(data)['COUNT(*)']
+    co2_total=Viaje.get_all_co2_count(data)['SUM(co2_total)']
+    return render_template("index.html",user=user,viajes=viajes,viajes_total=viajes_total,co2_total=co2_total)
 
 
 @app.route('/logout')

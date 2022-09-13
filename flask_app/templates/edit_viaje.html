@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Nuevo Viaje</title>
+    <title>Editar Viaje</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="/static/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
@@ -70,8 +70,8 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Nuevo Viaje</h1>
-                    <form action="/viaje/create" method="post" class="col-8 p-4 my-4 bg-light mx-auto">
+                    <h1 class="mt-4">Editar Viaje</h1>
+                    <form action="/viaje/edit" method="post" class="col-8 p-4 my-4 bg-light mx-auto">
                         {% with messages = get_flashed_messages(category_filter=['viaje']) %}
                         {% if messages %}
                         <div class="alert alert-danger" role="alert">
@@ -85,21 +85,22 @@
 
                         <div class="d-flex col-12">
                             <div class="col-10" style="margin:auto">
+                                <input type="hidden" name="id" class="form-control" value="{{viaje.id}}">
                                 <div class="form-group">
                                     <label for="pasajero_identificacion">Identificación Pasajero:</label>
-                                    <input type="text" name="pasajero_identificacion" class="form-control" required>
+                                    <input type="text" name="pasajero_identificacion" class="form-control" value="{{viaje.pasajero_identificacion}}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="pasajero_nombre">Nombre Pasajero:</label>
-                                    <input type="text" name="pasajero_nombre" class="form-control" required>
+                                    <input type="text" name="pasajero_nombre" class="form-control" value="{{viaje.pasajero_nombre}}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="descripcion">Descripción:</label>
-                                    <textarea name="descripcion" cols="10" rows="2" class="form-control" required></textarea>
+                                    <textarea name="descripcion" cols="10" rows="2" class="form-control" required>{{viaje.descripcion}}</textarea>
                                 </div>
                                 <br>
                                 <a href="/dashboard" class="btn btn-danger m-1">Cancelar</a>
-                                <input type="submit" value="Ingresar Tramos" class="btn btn-primary" style="float: right;">
+                                <input type="submit" value="Editar Tramos" class="btn btn-primary" style="float: right;">
                             </div>
                         </div>
                     </form>

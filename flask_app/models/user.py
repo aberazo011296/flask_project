@@ -7,13 +7,15 @@ import json
 
 class User:
     
-    db_name = 'viajes'
+    db_name = 'hermes'
     
     def __init__( self , data ):
         self.id = data['id']
         self.nombre = data['nombre']
         self.nombre_usuario = data['nombre_usuario']
         self.password = data['password']
+        self.rol = data['rol']
+        self.area = data['area']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
         
@@ -29,7 +31,7 @@ class User:
     
     @classmethod
     def save(cls, data):
-        query = "INSERT INTO usuarios ( nombre, nombre_usuario, password ) VALUES ( %(nombre)s, %(nombre_usuario)s, %(password)s );"
+        query = "INSERT INTO usuarios ( nombre, nombre_usuario, password, rol, area ) VALUES ( %(nombre)s, %(nombre_usuario)s, %(password)s, %(rol)s, %(area)s );"
         return connectToMySQL(cls.db_name).query_db( query, data )
     
     @classmethod

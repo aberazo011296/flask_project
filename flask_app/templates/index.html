@@ -66,14 +66,41 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Dashboard</h1>
                         <br>
+                        <div class="row d-flex align-items-center justify-content-between">
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-primary text-white mb-4">
+                                    <div class="card-body">Viajes (Valor Total)</div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-white">{{viajes_total}}</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-success text-white mb-4">
+                                    <div class="card-body">CO2 (Valor Total)</div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-white">{{co2_total}}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
-                            <div class="col-xl-12">
+                            <div class="col-xl-6">
                                 <div class="card mb-4">
                                     <div class="card-header">
                                         <i class="fas fa-chart-area me-1"></i>
-                                        Viajes e Impacto Ambiental
+                                        Viajes
                                     </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="20"></canvas></div>
+                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="50"></canvas></div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-area me-1"></i>
+                                        Impacto Ambiental
+                                    </div>
+                                    <div class="card-body"><canvas id="myAreaChartCo2" width="100%" height="50"></canvas></div>
                                 </div>
                             </div>
                         </div>
@@ -87,88 +114,44 @@
                                     <table id="datatablesSimple">
                                         <thead>
                                             <tr>
-                                                <th>Destino</th>
-                                                <th>Fecha Inicio</th>
-                                                <th>Fecha Fin</th>
-                                                <th>Plan</th>
-                                                <th>Acciones</th>
+                                                <th>Identificación Pasajero</th>
+                                                <th>Nombre Pasajero</th>
+                                                <th>Descripción</th>
+                                                <th>Km Totales</th>
+                                                <th>CO2</th>
+                                                <th>Opciones</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
                                             <tr>
-                                                <th>Destino</th>
-                                                <th>Fecha Inicio</th>
-                                                <th>Fecha Fin</th>
-                                                <th>Plan</th>
-                                                <th>Acciones</th>
+                                                <th>Identificación Pasajero</th>
+                                                <th>Nombre Pasajero</th>
+                                                <th>Descripción</th>
+                                                <th>Km Totales</th>
+                                                <th>CO2</th>
+                                                <th>Opciones</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
                                             {% for viaje in viajes %}
                                                 <tr>
-                                                    <td>{{viaje.destino}}</td>
-                                                    <td>{{viaje.fecha_inicio.strftime('%d %B %Y')}}</td>
-                                                    <td>{{viaje.fecha_fin.strftime('%d %B %Y')}}</td>
-                                                    <td>{{viaje.plan}}</td>
+                                                    <td>{{viaje.pasajero_identificacion}}</td>
+                                                    <td>{{viaje.pasajero_nombre}}</td>
+                                                    <td>{{viaje.descripcion}}</td>
+                                                    <td>{{viaje.km_total}}</td>
+                                                    <td>{{viaje.co2_total}}</td>
                                                     <td>
                                                         <a href="/viaje/{{viaje.id}}" style="text-decoration:none">
                                                             <button class="btn btn-sm btn-primary" type="button">
                                                                 <i class="fa fa-eye"></i></button>
                                                         </a>
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-table me-1"></i>
-                                    Viajes de otros usuarios
-                                </div>
-                                <div class="card-body">
-                                    <table id="datatablesSimple1">
-                                        <thead>
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Destino</th>
-                                                <th>Fecha Inicio</th>
-                                                <th>Fecha Fin</th>
-                                                <th>Plan</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Destino</th>
-                                                <th>Fecha Inicio</th>
-                                                <th>Fecha Fin</th>
-                                                <th>Plan</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </tfoot>
-                                        <tbody>
-                                            {% for viaje_otros in viajes_otros %}
-                                                <tr>
-                                                    <td>{{viaje_otros.nombre}}</td>
-                                                    <td>{{viaje_otros.destino}}</td>
-                                                    <td>{{viaje_otros.fecha_inicio.strftime('%d %B %Y')}}</td>
-                                                    <td>{{viaje_otros.fecha_fin.strftime('%d %B %Y')}}</td>
-                                                    <td>{{viaje_otros.plan}}</td>
-                                                    <td>
-                                                        <a href="/viaje/{{viaje_otros.id}}" style="text-decoration:none">
-                                                            <button class="btn btn-sm btn-primary" type="button">
-                                                                <i class="fa fa-eye"></i></button>
+                                                        <a href="/viaje/{{viaje.id}}/editar" style="text-decoration:none">
+                                                            <button class="btn btn-sm btn-info" type="button">
+                                                                <i class="fa fa-edit"></i></button>
                                                         </a>
-                                                        <a style="text-decoration:none">
-                                                            <form action="/viaje/join" method="post">
-                                                                <input type="hidden" name="viaje_id" value={{viaje_otros.id}}>
-                                                                <input type="submit" value="Unirse" class="btn btn-primary my-1">
-                                                            </form>
+                                                        <a href="/viaje/{{viaje.id}}/eliminar" style="text-decoration:none">
+                                                            <button class="btn btn-sm btn-danger" type="button">
+                                                                <i class="fa fa-trash"></i></button>
                                                         </a>
                                                     </td>
                                                 </tr>
@@ -198,8 +181,10 @@
         <script src="/static/js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
         <script src="/static/assets/demo/chart-area-demo.js"></script>
-        <script src="/static/assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
         <script src="/static/js/datatables-simple-demo.js"></script>
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
     </body>
 </html>
