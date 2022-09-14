@@ -35,6 +35,21 @@ class Viaje:
         return viajes
     
     @classmethod
+    def get_all_user(cls,data):
+        
+        query = "SELECT * FROM viajes WHERE usuario_id = %(id)s;"
+        results = connectToMySQL(cls.db_destino).query_db(query,data)
+        
+        viajes = []
+        
+        if len(results) >= 1:
+            for row in results:
+                viajes.append(cls(row))
+            print(viajes)
+            
+        return viajes
+    
+    @classmethod
     def get_all_count(cls,data):
         query = "SELECT COUNT(*) FROM viajes"
         return connectToMySQL(cls.db_destino).query_db(query,data)[0]
@@ -42,6 +57,16 @@ class Viaje:
     @classmethod
     def get_all_co2_count(cls,data):
         query = "SELECT SUM(co2_total) FROM viajes"
+        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
+    
+    @classmethod
+    def get_all_count_user(cls,data):
+        query = "SELECT COUNT(*) FROM viajes WHERE usuario_id = %(id)s;"
+        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
+    
+    @classmethod
+    def get_all_co2_count_user(cls,data):
+        query = "SELECT SUM(co2_total) FROM viajes WHERE usuario_id = %(id)s;"
         return connectToMySQL(cls.db_destino).query_db(query,data)[0]
     
     @classmethod

@@ -61,9 +61,16 @@ def dashboard():
     viajes_total = 0.00
     co2_total = 0.00
     user=User.get_by_id(data)
-    viajes=Viaje.get_all(data)
-    viajes_total=Viaje.get_all_count(data)['COUNT(*)']
-    co2_total=Viaje.get_all_co2_count(data)['SUM(co2_total)']
+    
+    if(user.rol != "administrador"):
+        viajes=Viaje.get_all_user(data)
+        viajes_total=Viaje.get_all_count_user(data)['COUNT(*)']
+        co2_total=Viaje.get_all_co2_count_user(data)['SUM(co2_total)']
+    else:
+        viajes=Viaje.get_all(data)
+        viajes_total=Viaje.get_all_count(data)['COUNT(*)']
+        co2_total=Viaje.get_all_co2_count(data)['SUM(co2_total)']
+        
     return render_template("index.html",user=user,viajes=viajes,viajes_total=viajes_total,co2_total=co2_total)
 
 
