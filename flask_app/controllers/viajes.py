@@ -142,6 +142,11 @@ def viajes_totales():
     if 'user_id' not in session:
         return redirect('/logout')
     
+    data_usuario ={
+        'id': session['user_id']
+    }
+    user=User.get_by_id(data_usuario)
+    
     viajes_totales = []
     
     for mes in range(12):
@@ -149,9 +154,15 @@ def viajes_totales():
         print(ultimo_dia_mes)
         data = {
             "inicio_mes": "2022"+"-"+str(mes+1)+"-"+"01",
-            "fin_mes": "2022"+"-"+str(mes+1)+"-"+str(ultimo_dia_mes)
+            "fin_mes": "2022"+"-"+str(mes+1)+"-"+str(ultimo_dia_mes),
+            'id': session['user_id']
         }
-        valor = Viaje.get_month(data)['COUNT(*)']
+        
+        if(user.rol != "administrador"):
+            valor = Viaje.get_month_user(data)['COUNT(*)']
+        else:
+            valor = Viaje.get_month(data)['COUNT(*)']
+
         viajes_totales.append(int(valor))
 
     return make_response(jsonify(
@@ -165,6 +176,11 @@ def co2_totales():
     if 'user_id' not in session:
         return redirect('/logout')
     
+    data_usuario ={
+        'id': session['user_id']
+    }
+    user=User.get_by_id(data_usuario)
+    
     co2_totales = []
 
     for mes in range(12):
@@ -172,9 +188,15 @@ def co2_totales():
         print(ultimo_dia_mes)
         data = {
             "inicio_mes": "2022"+"-"+str(mes+1)+"-"+"01",
-            "fin_mes": "2022"+"-"+str(mes+1)+"-"+str(ultimo_dia_mes)
+            "fin_mes": "2022"+"-"+str(mes+1)+"-"+str(ultimo_dia_mes),
+            'id': session['user_id']
         }
-        valor = Viaje.get_month_co2(data)['SUM(co2_total)']
+        
+        if(user.rol != "administrador"):
+            valor = Viaje.get_month_co2_user(data)['SUM(co2_total)']
+        else:
+            valor = Viaje.get_month_co2(data)['SUM(co2_total)']
+        
         if(valor is None):
             co2_totales.append(0)
         else:

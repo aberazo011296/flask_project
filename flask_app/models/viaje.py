@@ -82,7 +82,17 @@ class Viaje:
     
     @classmethod
     def get_month_co2(cls,data):
-        query = "SELECT SUM(co2_total) FROM viajes WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s"
+        query = "SELECT SUM(co2_total) FROM viajes WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s;"
+        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
+    
+    @classmethod
+    def get_month_user(cls,data):
+        query = "SELECT COUNT(*) FROM viajes WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s AND usuario_id = %(id)s"
+        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
+    
+    @classmethod
+    def get_month_co2_user(cls,data):
+        query = "SELECT SUM(co2_total) FROM viajes WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s AND usuario_id = %(id)s"
         return connectToMySQL(cls.db_destino).query_db(query,data)[0]
     
     @classmethod
