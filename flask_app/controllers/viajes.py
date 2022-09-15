@@ -6,6 +6,8 @@ import calendar
 from flask_app.models.viaje import Viaje
 from flask_app.models.user import User
 from flask_app.models.medios_transporte import MediosTransporte
+from flask_app.models.roles import Rol
+from flask_app.models.generos import Genero
 from flask_app.models.tramos import Tramos
 
 
@@ -158,7 +160,12 @@ def viajes_totales():
             'id': session['user_id']
         }
         
-        if(user.rol != "administrador"):
+        data_rol ={
+            'id': user.rol_id
+        }
+        rol = Rol.get_one(data_rol).nombre
+        
+        if(rol != "administrador"):
             valor = Viaje.get_month_user(data)['COUNT(*)']
         else:
             valor = Viaje.get_month(data)['COUNT(*)']
@@ -192,7 +199,12 @@ def co2_totales():
             'id': session['user_id']
         }
         
-        if(user.rol != "administrador"):
+        data_rol ={
+            'id': user.rol_id
+        }
+        rol = Rol.get_one(data_rol).nombre
+        
+        if(rol != "administrador"):
             valor = Viaje.get_month_co2_user(data)['SUM(co2_total)']
         else:
             valor = Viaje.get_month_co2(data)['SUM(co2_total)']

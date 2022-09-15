@@ -1,7 +1,7 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function ($scope, $http) {
 
-    $scope.api_server = "http://54.205.156.15:80/";
+    $scope.api_server = "http://localhost:5000/";
 
     $scope.viaje = {
         tramos: [{

@@ -7,7 +7,7 @@ let dataCO2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 function getViajesTotales() {
 
-  fetch("http://54.205.156.15:80/viajes-anuales", {
+  fetch("http://localhost:5000/viajes-anuales", {
       method: 'GET'
     })
     .then(response => response.json())
@@ -52,7 +52,7 @@ function getViajesTotales() {
 
 function getCO2Totales() {
 
-  fetch("http://54.205.156.15:80/co2-anuales", {
+  fetch("http://localhost:5000/co2-anuales", {
       method: 'GET'
     })
     .then(response => response.json())

@@ -1,21 +1,31 @@
 from flask_app.config.mysqlconnection import connectToMySQL
-import re	# the regex module
-# create a regular expression object that we'll use later   
+import re
+from datetime import datetime
+EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 PASSWORD_REGEX = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,18}$")
 from flask import flash
 import json
 
 class User:
     
-    db_name = 'hermes'
+    db_name = 'music_events'
     
     def __init__( self , data ):
         self.id = data['id']
-        self.nombre = data['nombre']
-        self.nombre_usuario = data['nombre_usuario']
+        self.identificacion = data['identificacion']
+        self.nombres = data['nombres']
+        self.apellidos = data['apellidos']
+        self.email = data['email']
         self.password = data['password']
-        self.rol = data['rol']
-        self.area = data['area']
+        self.descripcion = data['descripcion']
+        self.direccion = data['direccion']
+        self.celular = data['celular']
+        self.fecha_nacimiento = data['fecha_nacimiento']
+        self.nacionalidad = data['nacionalidad']
+        self.avatar = data['avatar']
+        self.video = data['video']
+        self.rol_id = data['rol_id']
+        self.genero_id = data['genero_id']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
         
@@ -31,7 +41,7 @@ class User:
     
     @classmethod
     def save(cls, data):
-        query = "INSERT INTO usuarios ( nombre, nombre_usuario, password, rol, area ) VALUES ( %(nombre)s, %(nombre_usuario)s, %(password)s, %(rol)s, %(area)s );"
+        query = "INSERT INTO usuarios(identificacion,nombres,apellidos,email,password,descripcion,direccion,celular,fecha_nacimiento,nacionalidad,avatar,video,rol_id,genero_id) VALUES(%(identificacion)s,%(nombres)s,%(apellidos)s,%(email)s,%(password)s,%(descripcion)s,%(direccion)s,%(celular)s,%(fecha_nacimiento)s,%(nacionalidad)s,%(avatar)s,%(video)s,%(rol_id)s,%(genero_id)s);"
         return connectToMySQL(cls.db_name).query_db( query, data )
     
     @classmethod
@@ -41,23 +51,30 @@ class User:
         return cls(result[0])
     
     @classmethod
-    def user_by_nombre_usuario(cls, data):
-        query  = "SELECT * FROM usuarios WHERE nombre_usuario = %(nombre_usuario)s";
+    def user_by_email(cls, data):
+        print("EBTROOOOOOOOO")
+        print(data)
+        query  = "SELECT * FROM usuarios WHERE email = %(email)s"
         result = connectToMySQL(cls.db_name).query_db(query,data)
         if len(result) < 1:
             return False
         return cls(result[0])
     
     @classmethod
-    def get_by_viaje_otros(cls,data):
-        query = "SELECT * FROM usuarios WHERE id IN ( SELECT usuario_id FROM usuarios_viajes WHERE viaje_id = %(viaje_id)s ) AND id != %(usuario_id)s;"
-        results = connectToMySQL(cls.db_name).query_db(query,data)
-        usuarios = []
-        for row in results:
-            usuarios.append(cls(row))
-        print(usuarios)
-        return usuarios
+    def update(cls, data):
+        query = "UPDATE usuarios SET identificacion = %(identificacion)s, nombres = %(nombres)s, apellidos = %(apellidos)s, email = %(email)s, password = %(password)s, descripcion = %(descripcion)s, direccion = %(direccion)s, celular = %(celular)s, fecha_nacimiento = %(fecha_nacimiento)s, nacionalidad = %(nacionalidad)s, avatar = %(avatar)s, video = %(video)s, updated_at = NOW(), rol_id = %(rol_id)s, genero_id = %(genero_id)s WHERE id = %(id)s;"
+        return connectToMySQL(cls.db_destino).query_db( query, data )
+    
+    @classmethod
+    def delete(cls, data):
+        query  = "DELETE FROM usuarios WHERE id = %(id)s"
+        return connectToMySQL(cls.db_destino).query_db( query, data )
 
+    @staticmethod
+    def calculate_age(born):
+        today = datetime.today()
+        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+    
     @staticmethod
     def validate_register(user):
         
@@ -67,18 +84,30 @@ class User:
         status = 'ok'
         code = 200
         
-        query = "SELECT * FROM usuarios WHERE nombre_usuario = %(nombre_usuario)s;"
+        query = "SELECT * FROM usuarios WHERE email = %(email)s;"
         results = connectToMySQL(User.db_name).query_db(query,user)
-        
+
         if len(results) >= 1:
-            mensaje = "Ya existe este nombre_usuario."
+            mensaje = "Ya existe este email."
             is_valid=False
             status = 'error'
             code = 400
 
-        if len(user['nombre']) < 3:
-            mensaje = "Nombre debe tener por lo menos 3 caracteres"
+        if len(user['nombres']) < 3:
+            mensaje = "Nombres debe tener por lo menos 3 caracteres"
             is_valid= False
+            status = 'error'
+            code = 400
+            
+        if len(user['apellidos']) < 3:
+            mensaje = "Apellidos debe tener por lo menos 3 caracteres"
+            is_valid= False
+            status = 'error'
+            code = 400
+            
+        if not EMAIL_REGEX.match(user['email']):
+            mensaje = "Formato Email incorrecto"
+            is_valid=False
             status = 'error'
             code = 400
 
@@ -96,6 +125,16 @@ class User:
 
         if user['password'] != user['confirm']:
             mensaje = "Contraseñas no coinciden"
+            is_valid= False
+            status = 'error'
+            code = 400
+        
+        fecha_nacimiento = datetime.strptime(user['fecha_nacimiento'], '%Y-%m-%d')
+        
+        edad = User.calculate_age(fecha_nacimiento)
+        
+        if(edad < 18):
+            mensaje = "Usuario menor de edad"
             is_valid= False
             status = 'error'
             code = 400
