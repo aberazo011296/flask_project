@@ -5,7 +5,7 @@ myForm.onsubmit = function (e) {
 
     var form = new FormData(myForm);
 
-    fetch("http://54.205.156.15:80/register", {
+    fetch("http://localhost:5000/register", {
             method: 'POST',
             body: form
         })
@@ -14,7 +14,7 @@ myForm.onsubmit = function (e) {
             if(data.status == 'ok'){
                 toastr.success(data.message);
                 setTimeout(function(){ 
-                    window.location.href = 'http://54.205.156.15:80/';
+                    window.location.href = 'http://localhost:5000/';
                 }, 3000);
             } else {
                 toastr.error(data.message);

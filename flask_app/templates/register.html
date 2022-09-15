@@ -28,60 +28,100 @@
                                     <div class="card-body">
                                         <form id='myForm' method="post">
 
-                                            {% with messages = get_flashed_messages(category_filter=['success']) %}
-                                            {% if messages %}
-                                            <div class="alert alert-success" role="alert">
-                                                {% for message in messages %}
-                                                <p>{{message}}</p>
-                                                {% endfor %}
-                                            </div>
-                                            {% endif %}
-                                            {% endwith %}
-                            
-                                            {% with messages = get_flashed_messages(category_filter=['register']) %}
-                                            {% if messages %}
-                                            <div class="alert alert-danger" role="alert">
-                                                <strong>Errores:</strong>
-                                                {% for message in messages %}
-                                                <p>{{message}}</p>
-                                                {% endfor %}
-                                            </div>
-                                            {% endif %}
-                                            {% endwith %}
-                            
                                             <div class="form-group">
-                                                <label for="nombre">Nombre:</label>
-                                                <input type="text" name="nombre" class="form-control" placeholder="Ingrese Nombre" maxlength="25" required>
+                                                <label for="identificacion">Identificación:</label>
+                                                <input type="text" name="identificacion" class="form-control" placeholder="Ingrese Idenficación" maxlength="15" required>
                                                 <div class="invalid-feedback">
                                                     Campo requerido
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="nombre_usuario">Nombre Usuario:</label>
-                                                <input class="form-control" type="text" name="nombre_usuario" placeholder="Ingrese Nombre Usuario" required>
+                                                <label for="nombres">Nombres:</label>
+                                                <input type="text" name="nombres" class="form-control" placeholder="Ingrese Nombres" maxlength="35" required>
                                                 <div class="invalid-feedback">
                                                     Campo requerido
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="rol">Rol:</label>
-                                                <select name="rol" class="form-control" required>
-                                                    <option value="administrador">Administrador</option>
-                                                    <option value="jefe_area">Jefe de área</option>
-                                                    <option value="vendedor">Vendedor</option>
+                                                <label for="apellidos">Apellidos:</label>
+                                                <input type="text" name="apellidos" class="form-control" placeholder="Ingrese Apellidos" maxlength="35" required>
+                                                <div class="invalid-feedback">
+                                                    Campo requerido
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="descripcion">Descripción:</label>
+                                                <textarea name="descripcion" cols="10" rows="3" class="form-control" required></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="direccion">Dirección:</label>
+                                                <input type="text" name="direccion" class="form-control" placeholder="Ingrese Dirección" maxlength="50" required>
+                                                <div class="invalid-feedback">
+                                                    Campo requerido
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="celular">Celular:</label>
+                                                <input type="text" name="celular" class="form-control" placeholder="Ingrese Celular" maxlength="10" required>
+                                                <div class="invalid-feedback">
+                                                    Campo requerido
+                                                </div>
+                                            </div>                                            
+                                            <div class="form-group">
+                                                <div id="date-picker-example" class="md-form md-outline input-with-post-icon datepicker" inline="true">
+                                                    <label for="fecha_nacimiento">Fecha Nacimiento:</label>
+                                                    <input placeholder="Seleccione Fecha" type="date" name="fecha_nacimiento" class="form-control" required>
+                                                    <div class="invalid-feedback">
+                                                        Campo requerido
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="nacionalidad">Nacionalidad:</label>
+                                                <input type="text" name="nacionalidad" class="form-control" placeholder="Ingrese Nacionalidad" maxlength="45" required>
+                                                <div class="invalid-feedback">
+                                                    Campo requerido
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="avatar">Avatar:</label>
+                                                <input type="file" name="avatar" placeholder="Ingrese Avatar" accept="image/png, image/gif, image/jpeg" required/>
+                                                <div class="invalid-feedback">
+                                                    Campo requerido
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="video">Video Presentación:</label>
+                                                <input type="file" name="video" placeholder="Ingrese Video" accept="video/mp4,video/x-m4v,video/*" required/>
+                                                <div class="invalid-feedback">
+                                                    Campo requerido
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="rol_id">Rol:</label>
+                                                <select name="rol_id" class="form-control" required>
+                                                    {% for rol in roles %}
+                                                    <option value="{{rol.id}}">{{rol.nombre}}</option>
+                                                    {% endfor %}
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Campo requerido
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="area">Área:</label>
-                                                <select name="area" class="form-control" required>
-                                                    <option value="administrativa">Administrativa</option>
-                                                    <option value="ingles">Inglés</option>
-                                                    <option value="español">Español</option>
-                                                    <option value="aleman">Aleman</option>
+                                                <label for="genero_id">Género Musical:</label>
+                                                <select name="genero_id" class="form-control" required>
+                                                    {% for genero in generos %}
+                                                    <option value="{{genero.id}}">{{genero.nombre}}</option>
+                                                    {% endfor %}
                                                 </select>
+                                                <div class="invalid-feedback">
+                                                    Campo requerido
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="email">Email:</label>
+                                                <input class="form-control" type="text" name="email" placeholder="Ingrese Nombre Usuario" required>
                                                 <div class="invalid-feedback">
                                                     Campo requerido
                                                 </div>
