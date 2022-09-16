@@ -46,14 +46,12 @@ class User:
     
     @classmethod
     def get_by_id(cls, data):
-        query  = "SELECT * FROM usuarios WHERE id = %(id)s";
+        query  = "SELECT * FROM usuarios WHERE id = %(id)s"
         result = connectToMySQL(cls.db_name).query_db(query,data)
         return cls(result[0])
     
     @classmethod
     def user_by_email(cls, data):
-        print("EBTROOOOOOOOO")
-        print(data)
         query  = "SELECT * FROM usuarios WHERE email = %(email)s"
         result = connectToMySQL(cls.db_name).query_db(query,data)
         if len(result) < 1:
@@ -63,12 +61,12 @@ class User:
     @classmethod
     def update(cls, data):
         query = "UPDATE usuarios SET identificacion = %(identificacion)s, nombres = %(nombres)s, apellidos = %(apellidos)s, email = %(email)s, password = %(password)s, descripcion = %(descripcion)s, direccion = %(direccion)s, celular = %(celular)s, fecha_nacimiento = %(fecha_nacimiento)s, nacionalidad = %(nacionalidad)s, avatar = %(avatar)s, video = %(video)s, updated_at = NOW(), rol_id = %(rol_id)s, genero_id = %(genero_id)s WHERE id = %(id)s;"
-        return connectToMySQL(cls.db_destino).query_db( query, data )
+        return connectToMySQL(cls.db_name).query_db( query, data )
     
     @classmethod
     def delete(cls, data):
         query  = "DELETE FROM usuarios WHERE id = %(id)s"
-        return connectToMySQL(cls.db_destino).query_db( query, data )
+        return connectToMySQL(cls.db_name).query_db( query, data )
 
     @staticmethod
     def calculate_age(born):
@@ -131,6 +129,148 @@ class User:
         
         fecha_nacimiento = datetime.strptime(user['fecha_nacimiento'], '%Y-%m-%d')
         
+        edad = User.calculate_age(fecha_nacimiento)
+        
+        if(edad < 18):
+            mensaje = "Usuario menor de edad"
+            is_valid= False
+            status = 'error'
+            code = 400
+            
+        value = {
+            "valid": is_valid,
+            "message": mensaje,
+            "category": categoria,
+            "status": status,
+            "code": code
+        }
+        
+        return json.dumps(value)
+
+    @staticmethod
+    def validate_usuario(user):
+        
+        is_valid = True
+        categoria = "register"
+        mensaje = "Exitoso"
+        status = 'ok'
+        code = 200
+        
+        query = "SELECT * FROM usuarios WHERE email = '" + user['email'] + "';"
+        results = connectToMySQL(User.db_name).query_db(query,user)
+
+        if len(results) >= 1:
+            mensaje = "Ya existe este email."
+            is_valid=False
+            status = 'error'
+            code = 400
+
+        if len(user['nombres']) < 3:
+            mensaje = "Nombres debe tener por lo menos 3 caracteres"
+            is_valid= False
+            status = 'error'
+            code = 400
+            
+        if len(user['apellidos']) < 3:
+            mensaje = "Apellidos debe tener por lo menos 3 caracteres"
+            is_valid= False
+            status = 'error'
+            code = 400
+            
+        if not EMAIL_REGEX.match(user['email']):
+            mensaje = "Formato Email incorrecto"
+            is_valid=False
+            status = 'error'
+            code = 400
+            
+        if not re.search(PASSWORD_REGEX, user['password']):
+            mensaje = "Contraseña debe tener números, letras mayúsculas y minúculas, caracteres especiales"
+            is_valid=False
+            status = 'error'
+            code = 400
+
+        if len(user['password']) < 8:
+            mensaje = "Contraseña debe tener por lo menos 8 caracteres"
+            is_valid= False
+            status = 'error'
+            code = 400
+
+        if user['password'] != user['confirm']:
+            mensaje = "Contraseñas no coinciden"
+            is_valid= False
+            status = 'error'
+            code = 400
+        
+        fecha_nacimiento = datetime.strptime(user['fecha_nacimiento'], '%Y-%m-%d')
+
+        edad = User.calculate_age(fecha_nacimiento)
+        
+        if(edad < 18):
+            mensaje = "Usuario menor de edad"
+            is_valid= False
+            status = 'error'
+            code = 400
+            
+        value = {
+            "valid": is_valid,
+            "message": mensaje,
+            "category": categoria,
+            "status": status,
+            "code": code
+        }
+        
+        return json.dumps(value)
+
+
+    @staticmethod
+    def validate_usuario_edit(user):
+        
+        is_valid = True
+        categoria = "register"
+        mensaje = "Exitoso"
+        status = 'ok'
+        code = 200
+        
+
+        if len(user['nombres']) < 3:
+            mensaje = "Nombres debe tener por lo menos 3 caracteres"
+            is_valid= False
+            status = 'error'
+            code = 400
+            
+        if len(user['apellidos']) < 3:
+            mensaje = "Apellidos debe tener por lo menos 3 caracteres"
+            is_valid= False
+            status = 'error'
+            code = 400
+            
+        if not EMAIL_REGEX.match(user['email']):
+            mensaje = "Formato Email incorrecto"
+            is_valid=False
+            status = 'error'
+            code = 400
+        
+        if (user['password'] != ''):
+            if not re.search(PASSWORD_REGEX, user['password']):
+                mensaje = "Contraseña debe tener números, letras mayúsculas y minúculas, caracteres especiales"
+                is_valid=False
+                status = 'error'
+                code = 400
+
+            if len(user['password']) < 8:
+                mensaje = "Contraseña debe tener por lo menos 8 caracteres"
+                is_valid= False
+                status = 'error'
+                code = 400
+
+            if user['password'] != user['confirm']:
+                mensaje = "Contraseñas no coinciden"
+                is_valid= False
+                status = 'error'
+                code = 400
+        
+        fecha_nacimiento = datetime.strptime(user['fecha_nacimiento'], '%Y-%m-%d')
+
         edad = User.calculate_age(fecha_nacimiento)
         
         if(edad < 18):
