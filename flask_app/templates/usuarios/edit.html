@@ -7,14 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard</title>
+    <title>Editar Usuario</title>
     <link href="/static/css/styles.css" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <link href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet"/>
-    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
     <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
     <script src="/static/js/usuarios.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
 </head>
 
 <body class="sb-nav-fixed">
@@ -52,49 +56,56 @@
             </nav>
         </div>
         <div id="layoutSidenav_content">
-            <main>
+            <main style="background: #f4f6fa">
                 <div ng-app="music_events" ng-controller="UsuarioCtrl">
-
                     <div class="container-fluid px-4" ng-init="getUsuario({{id}})">
                         <h1 class="mt-4">Editar Usuario</h1>
-                        <form name="usuarios_form" role="form" method="post" class="col-12 p-4 my-4 bg-light mx-auto" ng-submit="update({{id}})">
+                        <form name="usuarios_form" role="form" method="post" class="col-12 px-4 py-1 pb-4 my-4 mx-auto bg-white" ng-submit="update({{id}})">
                             <div class="form-group">
                                 <label>Identificación:</label>
-                                <input ng-model="usuario.identificacion" type="text" class="form-control" placeholder="Ingrese Idenficación" maxlength="15" required>
-                                <div class="invalid-feedback">
-                                    Campo requerido
+                                <input ng-model="usuario.identificacion" name="identificacion" id="identificacion" type="text" class="form-control" placeholder="Ingrese Idenficación" ng-minlength="10" ng-maxlength="13" required>
+                                <div class="m-t-xs ng-hide" ng-show="usuarios_form.identificacion.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.identificacion.$error.minlength">La identificación debe contener al menos 10 caractéres</small>
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.identificacion.$error.maxlength">La identificación corto debe tener máximo 13 caractéres</small>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Nombres:</label>
-                                <input type="text" ng-model="usuario.nombres" class="form-control" placeholder="Ingrese Nombres" maxlength="35" required>
-                                <div class="invalid-feedback">
-                                    Campo requerido
+                                <input type="text" ng-model="usuario.nombres" name="nombres" class="form-control" placeholder="Ingrese Nombres" ng-minlength="3" ng-maxlength="45" required>
+                                <div class="m-t-xs ng-hide" ng-show="usuarios_form.nombres.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.nombres.$error.minlength">Los nombres deben contener al menos 3 caractéres</small>
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.nombres.$error.maxlength">Los nombres corto deben tener máximo 45 caractéres</small>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Apellidos:</label>
-                                <input type="text" ng-model="usuario.apellidos" class="form-control" placeholder="Ingrese Apellidos" maxlength="35" required>
-                                <div class="invalid-feedback">
-                                    Campo requerido
+                                <input type="text" ng-model="usuario.apellidos" name="apellidos" class="form-control" placeholder="Ingrese Apellidos" ng-minlength="3" ng-maxlength="45" required>
+                                <div class="m-t-xs ng-hide" ng-show="usuarios_form.apellidos.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.apellidos.$error.minlength">Los apellidos deben contener al menos 3 caractéres</small>
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.apellidos.$error.maxlength">Los apellidos corto deben tener máximo 45 caractéres</small>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Descripción:</label>
-                                <textarea ng-model="usuario.descripcion" cols="10" rows="3" class="form-control" required></textarea>
+                                <textarea ng-model="usuario.descripcion" name="descripcion" cols="10" rows="3" class="form-control" ng-minlength="3" required></textarea>
+                                <div class="m-t-xs ng-hide" ng-show="usuarios_form.descripcion.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.descripcion.$error.minlength">La descripcion debe contener al menos 3 caractéres</small>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label>Dirección:</label>
-                                <input type="text" ng-model="usuario.direccion" class="form-control" placeholder="Ingrese Dirección" maxlength="50" required>
-                                <div class="invalid-feedback">
-                                    Campo requerido
+                                <input type="text" ng-model="usuario.direccion" name="direccion" class="form-control" placeholder="Ingrese Dirección" ng-minlength="3" ng-maxlength="200" required>
+                                <div class="m-t-xs ng-hide" ng-show="usuarios_form.direccion.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.direccion.$error.minlength">La dirección debe contener al menos 3 caractéres</small>
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.direccion.$error.maxlength">La dirección debe contener máximo 2 caractéres</small>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Celular:</label>
-                                <input type="text" ng-model="usuario.celular" class="form-control" placeholder="Ingrese Celular" maxlength="10" required>
-                                <div class="invalid-feedback">
-                                    Campo requerido
+                                <input type="text" ng-model="usuario.celular" name="celular" class="form-control" placeholder="Ingrese Celular" ng-minlength="10" ng-maxlength="10" ng-pattern-restrict="^[0-9]*$" required>
+                                <div class="m-t-xs ng-hide" ng-show="usuarios_form.celular.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.celular.$error.minlength">El celular debe contener al menos 7 caractéres</small>
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.celular.$error.maxlength">El celular debe contener máximo 10 caractéres</small>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -108,28 +119,30 @@
                             </div>
                             <div class="form-group">
                                 <label>Nacionalidad:</label>
-                                <input type="text" ng-model="usuario.nacionalidad" class="form-control" placeholder="Ingrese Nacionalidad" maxlength="45" required>
-                                <div class="invalid-feedback">
-                                    Campo requerido
+                                <input type="text" ng-model="usuario.nacionalidad" name="nacionalidad" class="form-control" placeholder="Ingrese Nacionalidad" ng-minlength="3" ng-maxlength="45" required>
+                                <div class="m-t-xs ng-hide" ng-show="usuarios_form.nacionalidad.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.nacionalidad.$error.minlength">La nacionalidad deben contener al menos 3 caractéres</small>
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.nacionalidad.$error.maxlength">nacionalidad corto deben tener máximo 45 caractéres</small>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Avatar:</label>
-                                <input type="file" ng-model="usuario.avatar" placeholder="Ingrese Avatar" accept="image/png, image/gif, image/jpeg" required/>
+                                <input type="file" ng-model="usuario.avatar" placeholder="Ingrese Avatar" accept="image/png, image/gif, image/jpeg"/>
                                 <div class="invalid-feedback">
                                     Campo requerido
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Video Presentación:</label>
-                                <input type="file" ng-model="usuario.video" placeholder="Ingrese Video" accept="video/mp4,video/x-m4v,video/*" required/>
+                                <input type="file" ng-model="usuario.video" placeholder="Ingrese Video" accept="video/mp4,video/x-m4v,video/*"/>
                                 <div class="invalid-feedback">
                                     Campo requerido
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Rol:</label>
-                                <select ng-model="usuario.rol_id" class="form-control" required>
+                                <select ng-model="usuario.rol_id" class="form-control selectpicker" data-live-search="true" required ng-change="actualizarChosen()">
+                                    <option value=""></option>
                                     {% for rol in roles %}
                                     <option value="{{rol.id}}">{{rol.nombre}}</option>
                                     {% endfor %}
@@ -140,7 +153,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Género Musical:</label>
-                                <select ng-model="usuario.genero_id" class="form-control" required>
+                                <select ng-model="usuario.genero_id" class="form-control selectpicker" data-live-search="true" required ng-change="actualizarChosen()">
+                                    <option value=""></option>
                                     {% for genero in generos %}
                                     <option value="{{genero.id}}">{{genero.nombre}}</option>
                                     {% endfor %}
@@ -150,25 +164,31 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Email:</label>
-                                <input class="form-control" type="text" ng-model="usuario.email" placeholder="Ingrese Nombre Usuario" required>
+                                <label>Instrumentos:</label>
+                                <select ng-model="usuario.instrumentos_ids" class="form-control selectpicker" multiple data-live-search="true" required>
+                                    <option value=""></option>
+                                    {% for instrumento in instrumentos %}
+                                    <option value="{{instrumento.id}}">{{instrumento.nombre}}</option>
+                                    {% endfor %}
+                                </select>
                                 <div class="invalid-feedback">
                                     Campo requerido
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="false">
+                                <label>Email:</label>
+                                <input class="form-control" type="text" ng-model="usuario.email"  name="email" placeholder="Ingrese Nombre Usuario" pattern="[a-zA-Z0-9_-]+([.][a-zA-Z0-9_-]+)*@[a-zA-Z0-9_-]+([.][a-zA-Z0-9_-]+)*[.][a-zA-Z]{1,5}" required>
+                                <div class="m-t-xs ng-hide" ng-show="usuarios_form.email.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="usuarios_form.email.$error.email">Ingrese un Email correcto</small>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Contraseña:</label>
                                 <input type="password" ng-model="usuario.password" class="form-control">
-                                <div class="invalid-feedback">
-                                    Campo requerido
-                                </div>
                             </div>
                             <div class="form-group">
                                 <label>Confirmar Contraseña:</label>
                                 <input type="password" ng-model="usuario.confirm" class="form-control">
-                                <div class="invalid-feedback">
-                                    Campo requerido
-                                </div>
                             </div>
                             <div class="col-12 mt-5">
                                 <a href="/usuarios" class="btn btn-danger m-1">Cancelar</a>
@@ -192,13 +212,6 @@
             </footer>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-    <script src="/static/js/datatables-simple-demo.js"></script>
-    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
 </body>
 
 </html>

@@ -5,6 +5,8 @@ from flask_app.models.user import User
 from flask_app.models.eventos import Evento
 from flask_app.models.roles import Rol
 from flask_app.models.generos import Genero
+from flask_app.models.instrumentos import Instrumento
+from flask_app.models.instrumentos_usuarios import InstrumentoUsuario
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
@@ -28,7 +30,7 @@ def create_user():
     validacion = json.loads(User.validate_register(request.form))
     
     if not validacion['valid']:
-        return make_response(jsonify(validacion), 201)
+        return make_response(jsonify(validacion), 400)
     
     data = {
         "identificacion" : request.form['identificacion'],
@@ -107,7 +109,7 @@ def get_usuarios():
 
 @app.route("/usuarios/nuevo")
 def usuarios_nuevo():
-    return render_template("usuarios/new.html", generos=Genero.get_all(), roles=Rol.get_all())
+    return render_template("usuarios/new.html", generos=Genero.get_all(), roles=Rol.get_all(), instrumentos=Instrumento.get_all())
 
 @app.route('/crear/usuario', methods=['POST'])
 def crear_usuario():
@@ -141,6 +143,13 @@ def crear_usuario():
         
     id = User.save(data)
     
+    for instrumento in usuario['instrumentos_ids']:
+        data = {
+            "instrumento_id" : int(instrumento),
+            "usuario_id" : int(id)
+        }
+        InstrumentoUsuario.save(data)
+    
     session['user_id'] = id
 
     validacion['message'] = "Usuario ingresado correctamente"
@@ -160,7 +169,7 @@ def destroy_usuario(id):
 def usuario_editar(id):
     if 'user_id' not in session:
         return redirect('/logout')
-    return render_template("usuarios/edit.html", generos=Genero.get_all(), roles=Rol.get_all(), id=id)
+    return render_template("usuarios/edit.html", generos=Genero.get_all(), roles=Rol.get_all(), id=id, instrumentos=Instrumento.get_all())
 
 @app.route('/usuarios/obtener/<id>')
 def get_usuario(id):
@@ -174,6 +183,11 @@ def get_usuario(id):
     
     usuario_get=User.get_by_id(data)
     
+    instrumentos = InstrumentoUsuario.get_by_user(data)
+    instrumentos_ids = []
+    for instrumento in instrumentos:
+        instrumentos_ids.append(str(instrumento.instrumento_id))
+        
     usuario = {
         "identificacion" : usuario_get.identificacion,
         "nombres" : usuario_get.nombres,
@@ -187,7 +201,8 @@ def get_usuario(id):
         "avatar" : usuario_get.avatar,
         "video" : usuario_get.video,
         "rol_id" : str(usuario_get.rol_id),
-        "genero_id" : str(usuario_get.genero_id)
+        "genero_id" : str(usuario_get.genero_id),
+        "instrumentos_ids" : instrumentos_ids
     }
         
 
@@ -239,6 +254,18 @@ def editar_usuario(id):
     }
     
     User.update(data)
+    
+    data_instrumentos = {
+        "id":int(id)
+    }
+    InstrumentoUsuario.delete_by_user(data_instrumentos)
+    
+    for instrumento in usuario['instrumentos_ids']:
+        data = {
+            "instrumento_id" : int(instrumento),
+            "usuario_id" : int(id)
+        }
+        InstrumentoUsuario.save(data)
     
     validacion['message'] = "Usuario actualizado correctamente"
     return make_response(jsonify(validacion), 201)
