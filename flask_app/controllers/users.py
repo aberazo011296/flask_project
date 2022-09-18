@@ -269,3 +269,9 @@ def editar_usuario(id):
     
     validacion['message'] = "Usuario actualizado correctamente"
     return make_response(jsonify(validacion), 201)
+
+@app.route('/usuario/<int:id>')
+def usuario_ver(id):
+    if 'user_id' not in session:
+        return redirect('/logout')
+    return render_template("usuarios/view.html", id=id)
