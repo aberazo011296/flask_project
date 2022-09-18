@@ -17,12 +17,12 @@ app.controller('UsuarioCtrl', function ($scope, $http) {
         avatar: '',
         video: '',
         rol_id: '',
-        genero_id: ''
+        genero_id: '',
+        instrumentos_ids:[]
     };
 
     $scope.create = function () {
 
-        console.log($scope.usuario)
         $http({
             method: 'POST',
             url: $scope.api_server + 'crear/usuario',
@@ -30,12 +30,10 @@ app.controller('UsuarioCtrl', function ($scope, $http) {
                 usuario: $scope.usuario
             }
         }).then(function successCallback(response) {
-
             toastr.success(response.data.message);
             setTimeout(function () {
                 window.location.href = $scope.api_server+'usuarios';
             }, 2000);
-
         }, function errorCallback(response) {
             toastr.error("Ocurrió un error");
         });
@@ -55,8 +53,6 @@ app.controller('UsuarioCtrl', function ($scope, $http) {
     };
 
     $scope.update = function (id) {
-
-        console.log($scope.usuario)
         $http({
             method: 'POST',
             url: $scope.api_server + 'editar/usuario/'+id,
@@ -74,5 +70,14 @@ app.controller('UsuarioCtrl', function ($scope, $http) {
             toastr.error("Ocurrió un error");
         });
     };
+
+    $scope.actualizarChosen = function () {
+        console.log("entro");
+        $('.selectpicker').selectpicker('refresh')
+    }
+
+    setTimeout(function () {
+        $('.selectpicker').selectpicker('refresh');
+    }, 1000);
 
 });
