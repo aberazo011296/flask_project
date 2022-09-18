@@ -33,7 +33,7 @@ class Evento:
             print(eventos)
             
         return eventos
-    
+
     @classmethod
     def get_all_user(cls,data):
         
@@ -48,63 +48,18 @@ class Evento:
             print(eventos)
             
         return eventos
-    
-    @classmethod
-    def get_all_count(cls,data):
-        query = "SELECT COUNT(*) FROM eventos"
-        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
-    
-    @classmethod
-    def get_all_co2_count(cls,data):
-        query = "SELECT SUM(co2_total) FROM eventos"
-        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
-    
-    @classmethod
-    def get_all_count_user(cls,data):
-        query = "SELECT COUNT(*) FROM eventos WHERE usuario_id = %(id)s;"
-        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
-    
-    @classmethod
-    def get_all_co2_count_user(cls,data):
-        query = "SELECT SUM(co2_total) FROM eventos WHERE usuario_id = %(id)s;"
-        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
-    
+
     @classmethod
     def get_one(cls,data):
         query = "SELECT * FROM eventos WHERE id = %(id)s;"
         results = connectToMySQL(cls.db_destino).query_db(query,data)
         return cls( results[0] )
-    
-    @classmethod
-    def get_month(cls,data):
-        query = "SELECT COUNT(*) FROM eventos WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s"
-        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
-    
-    @classmethod
-    def get_month_co2(cls,data):
-        query = "SELECT SUM(co2_total) FROM eventos WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s;"
-        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
-    
-    @classmethod
-    def get_month_user(cls,data):
-        query = "SELECT COUNT(*) FROM eventos WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s AND usuario_id = %(id)s"
-        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
-    
-    @classmethod
-    def get_month_co2_user(cls,data):
-        query = "SELECT SUM(co2_total) FROM eventos WHERE updated_at >= %(inicio_mes)s AND updated_at <= %(fin_mes)s AND usuario_id = %(id)s"
-        return connectToMySQL(cls.db_destino).query_db(query,data)[0]
-    
-    @classmethod
-    def edit_totales(cls, data):
-        query = "UPDATE eventos SET km_total = %(km_total)s, co2_total = %(co2_total)s WHERE id = %(id)s"
-        return connectToMySQL(cls.db_destino).query_db( query, data )
-    
+
     @classmethod
     def update(cls, data):
         query = "UPDATE eventos SET pasajero_identificacion = %(pasajero_identificacion)s, pasajero_nombre = %(pasajero_nombre)s, descripcion = %(descripcion)s WHERE id = %(id)s;"
         return connectToMySQL(cls.db_destino).query_db( query, data )
-    
+        
     @classmethod
     def delete(cls, data):
         query  = "DELETE FROM eventos WHERE id = %(id)s"
