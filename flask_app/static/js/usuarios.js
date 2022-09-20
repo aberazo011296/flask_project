@@ -21,6 +21,8 @@ app.controller('UsuarioCtrl', function ($scope, $http) {
         instrumentos_ids:[]
     };
 
+    $scope.calificacion = 0;
+
     $scope.create = function () {
 
         $http({
@@ -72,12 +74,46 @@ app.controller('UsuarioCtrl', function ($scope, $http) {
     };
 
     $scope.actualizarChosen = function () {
-        console.log("entro");
         $('.selectpicker').selectpicker('refresh')
-    }
+    };
 
     setTimeout(function () {
         $('.selectpicker').selectpicker('refresh');
     }, 1000);
+
+    $scope.calificar = function (posicion) {
+        
+        for (var i = 1; i < posicion + 1; i++){
+            var estrella = document.getElementById("star"+i);
+            estrella.classList.add("checked-stars");
+        }
+
+        for (var i = posicion+1; i < 6; i++){
+            var estrella = document.getElementById("star"+i);
+            estrella.classList.remove("checked-stars");
+        }
+
+        $scope.calificacion = posicion;
+        
+    };
+
+    $scope.rating = function (id) {
+        $http({
+            method: 'POST',
+            url: $scope.api_server + 'calificar/usuario/'+id,
+            data: {
+                calificacion: $scope.calificacion
+            }
+        }).then(function successCallback(response) {
+
+            toastr.success(response.data.message);
+            setTimeout(function () {
+                window.location.href = $scope.api_server+'usuarios';
+            }, 2000);
+
+        }, function errorCallback(response) {
+            toastr.error("Ocurrió un error");
+        });
+    }
 
 });

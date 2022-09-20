@@ -20,6 +20,7 @@
     <script src="/static/js/usuarios.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="/static/js/scripts.js"></script>
 </head>
 
@@ -69,51 +70,77 @@
             <main style="background: #f4f6fa">
                 <div ng-app="music_events" ng-controller="UsuarioCtrl">
                     <div class="container-fluid px-4">
-                        <section class="vh-100" style="background-color: #f4f5f7;">
-                            <div class="container py-5 h-100">
+                        <section style="background-color: #f4f5f7;">
+                            <div class="container">
                                 <div class="row d-flex justify-content-center align-items-center h-100">
-                                    <div class="col col-lg-6 mb-4 mb-lg-0">
+                                    <div class="col col-lg-12 my-4 mb-lg-0">
                                         <div class="card mb-3" style="border-radius: .5rem;">
                                             <div class="row g-0">
-                                                <div class="col-md-4 gradient-custom text-center text-white"
+                                                <div class="col-md-4 gradient-custom text-center text-white d-flex justify-content-center align-items-center"
+                                                    style="flex-direction: column;"
                                                     style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
                                                     <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                                        alt="Avatar" class="img-fluid my-5" style="width: 80px;" />
-                                                    <h5>Marie Horwitz</h5>
-                                                    <p>Web Designer</p>
-                                                    <i class="far fa-edit mb-5"></i>
+                                                        alt="Avatar" class="img-fluid my-2" style="width: 30%;" />
+                                                    <h2> {{usuario.nombres}} {{usuario.apellidos}}</h2>
+                                                    <h2>{{genero.nombre}}</h2>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="card-body p-4">
                                                         <h6>Información</h6>
                                                         <hr class="mt-0 mb-4">
                                                         <div class="row pt-1">
-                                                            <div class="col-6 mb-3">
-                                                                <h6>Email</h6>
-                                                                <p class="text-muted">info@example.com</p>
-                                                            </div>
-                                                            <div class="col-6 mb-3">
-                                                                <h6>Celular</h6>
-                                                                <p class="text-muted">123 456 789</p>
+                                                            <div class="col-12 mb-3">
+                                                                <h6>Identificación:</h6>
+                                                                <p class="text-muted">{{usuario.identificacion}}</p>
                                                             </div>
                                                         </div>
-                                                        <h6>Projects</h6>
+                                                        <div class="row pt-1">
+                                                            <div class="col-6 mb-3">
+                                                                <h6>Email:</h6>
+                                                                <p class="text-muted">{{usuario.email}}</p>
+                                                            </div>
+                                                            <div class="col-6 mb-3">
+                                                                <h6>Celular:</h6>
+                                                                <p class="text-muted">{{usuario.celular}}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row pt-1">
+                                                            <div class="col-12 mb-3">
+                                                                <h6>Dirección:</h6>
+                                                                <p class="text-muted">{{usuario.direccion}}</p>
+                                                            </div>
+                                                        </div>
+                                                        <h6>Descripción</h6>
+                                                        <hr class="mt-0 mb-4">
+                                                        <div class="row pt-1">
+                                                            <div class="col-12 mb-3">
+                                                                <p class="text-muted">
+                                                                    {{usuario.descripcion}}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <h6>Instrumentos</h6>
+                                                        <hr class="mt-0 mb-4">
+                                                        <div class="row pt-1">
+                                                            {% for instrumento in instrumentos %}
+                                                                <div class="col-6 mb-3">
+                                                                    <img src="/static/img/{{instrumento.nombre}}.png"
+                                                                        alt="{{instrumento.nombre}}" width="100px" height="100px">
+                                                                    <p class="text-muted">{{instrumento.nombre}}</p>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                        <h6>Rating</h6>
                                                         <hr class="mt-0 mb-4">
                                                         <div class="row pt-1">
                                                             <div class="col-6 mb-3">
-                                                                <h6>Recent</h6>
-                                                                <p class="text-muted">Lorem ipsum</p>
+                                                                {% for x in range(0,calificacion) %}
+                                                                    <span class="stars fa fa-star checked-stars"></span>
+                                                                {% endfor %}
+                                                                {% for x in range(0,(5-calificacion)) %}
+                                                                    <span class="stars fa fa-star"></span>
+                                                                {% endfor %}
                                                             </div>
-                                                            <div class="col-6 mb-3">
-                                                                <h6>Most Viewed</h6>
-                                                                <p class="text-muted">Dolor sit amet</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-flex justify-content-start">
-                                                            <a href="#!"><i
-                                                                    class="fab fa-facebook-f fa-lg me-3"></i></a>
-                                                            <a href="#!"><i class="fab fa-twitter fa-lg me-3"></i></a>
-                                                            <a href="#!"><i class="fab fa-instagram fa-lg"></i></a>
                                                         </div>
                                                     </div>
                                                 </div>

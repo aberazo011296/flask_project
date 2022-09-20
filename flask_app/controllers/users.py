@@ -1,5 +1,6 @@
 from flask import render_template, redirect, session, request, flash, jsonify, make_response
 import json
+import decimal 
 from flask_app import app
 from flask_app.models.user import User
 from flask_app.models.eventos import Evento
@@ -7,6 +8,7 @@ from flask_app.models.roles import Rol
 from flask_app.models.generos import Genero
 from flask_app.models.instrumentos import Instrumento
 from flask_app.models.instrumentos_usuarios import InstrumentoUsuario
+from flask_app.models.calificaciones_usuarios import CalificacionUsuario
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
@@ -22,7 +24,7 @@ def logout():
 
 @app.route("/registro")
 def registro():
-    return render_template("register.html", generos=Genero.get_all(), roles=Rol.get_all())
+    return render_template("register.html", generos=Genero.get_all(), roles=Rol.get_all(),instrumentos=Instrumento.get_all())
 
 @app.route('/register', methods=['POST'])
 def create_user():
@@ -50,6 +52,14 @@ def create_user():
     }
         
     id = User.save(data)
+    
+    for instrumento in request.form['instrumentos_ids']:
+        print(instrumento)
+        data = {
+            "instrumento_id" : int(instrumento),
+            "usuario_id" : int(id)
+        }
+        InstrumentoUsuario.save(data)
     
     session['user_id'] = id
 
@@ -274,4 +284,45 @@ def editar_usuario(id):
 def usuario_ver(id):
     if 'user_id' not in session:
         return redirect('/logout')
-    return render_template("usuarios/view.html", id=id)
+    
+    data = {
+            "id":id
+    }
+    usuario=User.get_by_id(data)
+    
+    data_genero = {
+        "id":usuario.genero_id
+    }
+    genero = Genero.get_one(data_genero)
+    
+    resultado = CalificacionUsuario.get_avg(data)
+    calificacion_promedio = 0
+    if(resultado[0]['promedio'] is not None):
+        round_num = resultado[0]['promedio']
+        calificacion_promedio = decimal.Decimal(round_num).quantize(decimal.Decimal('0'), rounding=decimal.ROUND_HALF_UP)
+        calificacion_promedio = int(calificacion_promedio)
+    
+    return render_template("usuarios/view.html", id=id, instrumentos=Instrumento.get_instrumentos_user(data), usuario=usuario, genero=genero, calificacion=calificacion_promedio)
+
+@app.route('/usuario/<int:id>/calificar')
+def usuario_calificar(id):
+    if 'user_id' not in session:
+        return redirect('/logout')
+    return render_template("usuarios/rating.html", id=id)
+
+@app.route('/calificar/usuario/<id>', methods=['POST'])
+def calificar_usuario(id):
+    
+    datos = json.loads(request.data)
+    
+    data = {
+        "usuario_id": int(id),
+        "puntuacion" : datos['calificacion']
+    }
+    
+    CalificacionUsuario.save(data)
+    
+    validacion = {
+        "message": "Comentario creado correctamente"
+    }
+    return make_response(validacion, 201)

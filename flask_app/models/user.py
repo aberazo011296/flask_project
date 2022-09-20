@@ -65,8 +65,10 @@ class User:
     
     @classmethod
     def delete(cls, data):
+        query1  = "DELETE FROM instrumentos_usuarios WHERE usuario_id = %(id)s"
+        connectToMySQL(cls.db_name).query_db(query1, data)
         query  = "DELETE FROM usuarios WHERE id = %(id)s"
-        return connectToMySQL(cls.db_name).query_db( query, data )
+        return connectToMySQL(cls.db_name).query_db(query, data)
 
     @staticmethod
     def calculate_age(born):
