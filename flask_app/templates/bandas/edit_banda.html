@@ -58,7 +58,7 @@
                     <div class="container-fluid px-4" ng-init="getUsuario({{id}})">
                         <h1 class="mt-4">Editar Banda</h1>
                         <form name="banda_form" role="form" action="/update/banda" method="post" class="col-12 p-4 my-4 bg-light mx-auto" >
-                            
+                            <input  type="hidden" name="id" value="{{edit.id}}">
 
                                     {% with messages = get_flashed_messages(category_filter=['banda']) %}
                                     {% if messages %}
@@ -78,7 +78,7 @@
 
                             <div class="form-group">
                                 <label>Numero de integrantes:</label>
-                                <input type="text"  class="form-control" name="nombre" value="{{edit.num_integrantes}}">
+                                <input type="text"  class="form-control" name="num_integrantes" value="{{edit.num_integrantes}}">
                             </div>
 
                             <div class="form-group">
@@ -102,12 +102,21 @@
 
                             <div class="form-group">
                                 <label>Email:</label>
-                                <input class="form-control" type="text" name="email" value="{{edit.email}}" >>
+                                <input class="form-control" type="text" name="email" value="{{edit.email}}" >
                             </div>
                             
-                            
+                            <div class="form-group">
+                                <label>Género Musical:</label>
+                                <select  name="genero_id" ng-model="usuario.genero_id" class="form-control " data-live-search="true" required>
+                                    
+                                    {% for genero in generos %}
+                                    <option  value="{{genero.id|string ~ name}}">{{genero.nombre}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
                             <div class="col-12 mt-5">
-                                <a href="/dashboard " class="btn btn-danger m-1">Cancelar</a>
+                                <a href="/bandas " class="btn btn-danger m-1">Cancelar</a>
                                 <input type="submit" value="Guardar" class="btn btn-primary" style="float: right;">
                             </div>
                         </form>

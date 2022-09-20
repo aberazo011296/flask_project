@@ -95,7 +95,7 @@ def dashboard():
     }
     rol = Rol.get_one(data_rol).nombre
     
-    eventos=Evento.get_all(data)
+    eventos=Evento.get_all()
         
     return render_template("index.html",user=user,eventos=eventos,rol=rol)
 
