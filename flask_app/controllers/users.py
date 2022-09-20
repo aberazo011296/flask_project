@@ -1,4 +1,5 @@
 from flask import render_template, redirect, session, request, flash, jsonify, make_response
+from flask_mail import Mail, Message
 import json
 import decimal 
 from flask_app import app
@@ -13,6 +14,14 @@ from flask_app.models.solicitudes import Solicitud
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
+
+app.config['MAIL_SERVER']='smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = '1871b9f82c95e8'
+app.config['MAIL_PASSWORD'] = '57386b31c1dd4f'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
 
 @app.route("/")
 def index():
@@ -343,6 +352,25 @@ def envento_usuarios_solicitud_crear(evento_id,usuario_id):
     
     Solicitud.save(data)
     
+    data_evento = {
+        "id": int(evento_id)
+    }
+    evento = Evento.get_one(data_evento)
+    
+    data_usuario = {
+        "id": int(usuario_id)
+    }
+    usuario = User.get_by_id(data_usuario)
+    
+    data_usuario_evento = {
+        "id": int(evento.usuario_id)
+    }
+    usuario_evento = User.get_by_id(data_usuario_evento)
+    
+    msg1 = Message('Solicitud del evento '+evento.titulo, sender = 'music_events@mailtrap.io', recipients = [usuario_evento.email])
+    msg1.html = "<b>"+usuario_evento.nombres+",</b><br><br>El usuario "+ usuario.nombres +", "+ usuario.email +" ha solicitado unirse a: <br><br><b>Datos del Evento: </b><br>"+"<b>Nombre: </b>"+evento.titulo+"<br><b>Fecha: </b>"+str(evento.fecha)+"<br><b>Hora Inicio: </b>"+str(evento.hora_inicio)+"<br><b>Hora Fin: </b>"+str(evento.hora_fin)+"<br><br>Por favor ingresar a la aplicación para aceptar o negar la solicitud.<br><br>Saludos,<br><br>MusicEvents"
+    mail.send(msg1)
+    
     return redirect('/eventos/'+str(evento_id)+'/solicitar')
 
 @app.route('/dashboard/<int:evento_id>/<int:usuario_id>/solicitar')
@@ -358,5 +386,24 @@ def envento_usuarios_solicitud_dashboard(evento_id,usuario_id):
     }
     
     Solicitud.save(data)
+    
+    data_evento = {
+        "id": int(evento_id)
+    }
+    evento = Evento.get_one(data_evento)
+    
+    data_usuario = {
+        "id": int(usuario_id)
+    }
+    usuario = User.get_by_id(data_usuario)
+    
+    data_usuario_evento = {
+        "id": int(evento.usuario_id)
+    }
+    usuario_evento = User.get_by_id(data_usuario_evento)
+    
+    msg1 = Message('Solicitud del evento '+evento.titulo, sender = 'music_events@mailtrap.io', recipients = [usuario_evento.email])
+    msg1.html = "<b>"+usuario_evento.nombres+",</b><br><br>El usuario "+ usuario.nombres +", "+ usuario.email +" ha solicitado unirse a: <br><br><b>Datos del Evento: </b><br>"+"<b>Nombre: </b>"+evento.titulo+"<br><b>Fecha: </b>"+str(evento.fecha)+"<br><b>Hora Inicio: </b>"+str(evento.hora_inicio)+"<br><b>Hora Fin: </b>"+str(evento.hora_fin)+"<br><br>Por favor ingresar a la aplicación para aceptar o negar la solicitud.<br><br>Saludos,<br><br>MusicEvents"
+    mail.send(msg1)
     
     return redirect('/dashboard')

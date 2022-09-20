@@ -1,4 +1,5 @@
 from flask import render_template, redirect, session, request, flash, jsonify, make_response
+from flask_mail import Mail, Message
 import json
 from flask_app import app
 from flask_app.models.user import User
@@ -8,6 +9,14 @@ from flask_app.models.solicitudes import Solicitud
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
+
+app.config['MAIL_SERVER']='smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = '1871b9f82c95e8'
+app.config['MAIL_PASSWORD'] = '57386b31c1dd4f'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
 
 @app.route('/solicitudes')
 def get_solicitudes():
@@ -70,6 +79,29 @@ def editar_solicitud(evento_id,usuario_id):
     }
         
     Solicitud.update(data)
+    
+    data_evento = {
+        "id": int(evento_id)
+    }
+    evento = Evento.get_one(data_evento)
+    
+    data_usuario = {
+        "id": int(usuario_id)
+    }
+    usuario = User.get_by_id(data_usuario)
+    
+    data_usuario_evento = {
+        "id": int(evento.usuario_id)
+    }
+    usuario_evento = User.get_by_id(data_usuario_evento)
+    
+    msg = Message('Solicitud del evento '+evento.titulo, sender = 'music_events@mailtrap.io', recipients = [usuario.email])
+    msg.html = "<b>"+usuario.nombres+",</b><br><br>La solicitud se encuentra en estado: <b>"+estado+"</b><br><br><b>Datos del Evento: </b><br>"+"<b>Nombre: </b>"+evento.titulo+"<br><b>Fecha: </b>"+str(evento.fecha)+"<br><b>Hora Inicio: </b>"+str(evento.hora_inicio)+"<br><b>Hora Fin: </b>"+str(evento.hora_fin)+"<br><br>Saludos,<br><br>MusicEvents"
+    mail.send(msg)
+    
+    msg1 = Message('Solicitud del evento '+evento.titulo, sender = 'music_events@mailtrap.io', recipients = [usuario_evento.email])
+    msg1.html = "<b>"+usuario_evento.nombres+",</b><br><br>La solicitud del usuario "+usuario.nombres+" se encuentra en estado: <b>"+estado+"</b><br><br><b>Datos del Evento: </b><br>"+"<b>Nombre: </b>"+evento.titulo+"<br><b>Fecha: </b>"+str(evento.fecha)+"<br><b>Hora Inicio: </b>"+str(evento.hora_inicio)+"<br><b>Hora Fin: </b>"+str(evento.hora_fin)+"<br><br>Saludos,<br><br>MusicEvents"
+    mail.send(msg1)
     
     return make_response(jsonify(
             status='ok',

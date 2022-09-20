@@ -13,6 +13,7 @@ class Evento:
         self.hora_fin = db_data['hora_fin']
         self.opciones = db_data['opciones']
         self.genero_id = db_data['genero_id']
+        self.usuario_id = db_data['usuario_id']
         self.created_at = db_data['created_at']
         self.updated_at = db_data['updated_at']
 
