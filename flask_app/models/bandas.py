@@ -39,7 +39,7 @@ class Bandas:
 
     @classmethod
     def update(cls, data):
-        query = "UPDATE bandas SET nombre=%(nombre)s, num_integrantes=%(num_integrantes)s, video=%(video)s, avatar=%(avatar)s, celular=%(celular)s,email=%(email)s, genero_id= %(genero_id)s updated_at=NOW() WHERE id = %(id)s;"
+        query = "UPDATE bandas SET nombre=%(nombre)s, num_integrantes=%(num_integrantes)s, video=%(video)s, avatar=%(avatar)s, celular=%(celular)s,email=%(email)s, genero_id= %(genero_id)s WHERE id = %(id)s;"
         return connectToMySQL(cls.db_name).query_db(query,data)
     
     @classmethod
@@ -66,4 +66,3 @@ class Bandas:
             #is_valid = False
             #flash("Escoga un genero","banda")
         return is_valid
-        

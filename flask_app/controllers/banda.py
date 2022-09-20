@@ -61,7 +61,7 @@ def edit_banda(id):
     user_data = {
         "id":session['user_id']
     }
-    return render_template("edit_banda.html",edit=Bandas.get_one(data),user=User.get_by_id(user_data),generos=Genero.get_all())
+    return render_template("bandas/edit_banda.html",edit=Bandas.get_one(data),user=User.get_by_id(user_data),generos=Genero.get_all())
 
 
 @app.route('/update/banda',methods=['POST'])
@@ -79,10 +79,11 @@ def update_banda():
         "celular": request.form["celular"],
         "email": request.form["email"],
         "genero_id": request.form["genero_id"],
+        "id": int(request.form["id"]),
         "user_id": session["user_id"]
     }
     Bandas.update(data)
-    return redirect('/dashboard')
+    return redirect('/bandas')
 
 @app.route('/destroy/banda/<int:id>')
 def destroy_banda(id):
@@ -92,7 +93,7 @@ def destroy_banda(id):
         "id":id
     }
     Bandas.destroy(data)
-    return redirect('/dashboard')
+    return redirect('/bandas')
 
 
 @app.route('/banda/<int:id>')
