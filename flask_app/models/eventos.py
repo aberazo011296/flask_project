@@ -132,3 +132,33 @@ class Evento:
         }
         
         return json.dumps(value)
+    
+    @classmethod
+    def get_all_by_user_ok(cls,data):
+        
+        query = "SELECT * FROM music_events.eventos WHERE id IN (SELECT evento_id FROM solicitudes WHERE usuario_id = %(id)s);"
+        results = connectToMySQL(cls.db_destino).query_db(query,data)
+        
+        eventos = []
+        
+        if len(results) >= 1:
+            for row in results:
+                eventos.append(cls(row))
+            print(eventos)
+            
+        return eventos
+    
+    @classmethod
+    def get_all_by_user_new(cls,data):
+        
+        query = "SELECT * FROM music_events.eventos WHERE id NOT IN (SELECT evento_id FROM solicitudes WHERE usuario_id = %(id)s);"
+        results = connectToMySQL(cls.db_destino).query_db(query,data)
+        
+        eventos = []
+        
+        if len(results) >= 1:
+            for row in results:
+                eventos.append(cls(row))
+            print(eventos)
+            
+        return eventos

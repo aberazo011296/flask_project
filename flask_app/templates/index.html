@@ -51,6 +51,10 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                                 Bandas
                             </a>
+                            <a class="nav-link" href="/solicitudes">
+                                <div class="sb-nav-link-icon"><i class="fa fa-bell"></i></div>
+                                Solicitudes
+                            </a>
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
@@ -67,8 +71,8 @@
                         <div class="row">
                             <div class="card mb-4">
                                 <div class="card-header">
-                                    <i class="fas fa-table me-1"></i>
-                                    Eventos
+                                    <i class="fas fa-newspaper me-1"></i>
+                                    Eventos Nuevos
                                 </div>
                                 <div class="card-body">
                                     <table id="datatablesSimple">
@@ -79,26 +83,68 @@
                                                 <th>Fecha</th>
                                                 <th>Hora Inicio</th>
                                                 <th>Hora fin</th>
+                                                <th>Tipo</th>
                                                 <th>Opciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for evento in eventos %}
+                                            {% for evento in eventos_new %}
                                                 <tr>
                                                     <td>{{evento.titulo}}</td>
                                                     <td>{{evento.direccion}}</td>
                                                     <td>{{evento.fecha}}</td>
                                                     <td>{{evento.hora_inicio}}</td>
                                                     <td>{{evento.hora_fin}}</td>
+                                                    <td>{{evento.opciones}}</td>
                                                     <td>
-                                                        
-                                                        <a href="/evento/{{evento.id}}/editar" style="text-decoration:none">
+                                                        <a href="/evento/{{evento.id}}" style="text-decoration:none">
                                                             <button class="btn btn-sm btn-info" type="button">
-                                                                <i class="fa fa-edit"></i></button>
+                                                                <i class="fa fa-eye"></i></button>
                                                         </a>
-                                                        <a href="/evento/evento/{{evento.id}}" style="text-decoration:none">
-                                                            <button class="btn btn-sm btn-danger" type="button">
-                                                                <i class="fa fa-trash"></i></button>
+                                                        <a href="/dashboard/{{evento.id}}/{{user.id}}/solicitar" style="text-decoration:none">
+                                                            <button class="btn btn-sm btn-success" type="button">
+                                                                <i class="fa fa-plus"></i></button>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <i class="fas fa-check-square me-1"></i>
+                                    Eventos Solicitados
+                                </div>
+                                <div class="card-body">
+                                    <table id="datatablesSimple1">
+                                        <thead>
+                                            <tr>
+                                                <th>Título</th>
+                                                <th>Dirección</th>
+                                                <th>Fecha</th>
+                                                <th>Hora Inicio</th>
+                                                <th>Hora fin</th>
+                                                <th>Tipo</th>
+                                                <th>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for evento in eventos_ok %}
+                                                <tr>
+                                                    <td>{{evento.titulo}}</td>
+                                                    <td>{{evento.direccion}}</td>
+                                                    <td>{{evento.fecha}}</td>
+                                                    <td>{{evento.hora_inicio}}</td>
+                                                    <td>{{evento.hora_fin}}</td>
+                                                    <td>{{evento.opciones}}</td>
+                                                    <td>
+                                                        <a href="/evento/{{evento.id}}" style="text-decoration:none">
+                                                            <button class="btn btn-sm btn-info" type="button">
+                                                                <i class="fa fa-eye"></i></button>
                                                         </a>
                                                     </td>
                                                 </tr>

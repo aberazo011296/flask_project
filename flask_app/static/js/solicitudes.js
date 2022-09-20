@@ -40,19 +40,27 @@ app.controller('SolicitudCtrl', function ($scope, $http) {
         });
     };
 
-    $scope.update = function (id) {
+    $scope.update = function (evento_id, usuario_id, estado, num_integrantes) {
         $http({
             method: 'POST',
-            url: $scope.api_server + 'editar/usuario/'+id,
+            url: $scope.api_server + 'editar/solicitud/'+evento_id+'/'+usuario_id,
             data: {
-                usuario: $scope.usuario
+                estado: estado,
+                num_integrantes: num_integrantes
             }
         }).then(function successCallback(response) {
 
-            toastr.success(response.data.message);
-            setTimeout(function () {
-                window.location.href = $scope.api_server+'usuarios';
-            }, 2000);
+            if(response.data.message === 'Evento llenó su cupo'){
+                toastr.warning(response.data.message);
+                setTimeout(function () {
+                    window.location.href = $scope.api_server+'solicitudes';
+                }, 2000);
+            } else {
+                toastr.success(response.data.message);
+                setTimeout(function () {
+                    window.location.href = $scope.api_server+'solicitudes';
+                }, 2000);
+            }
 
         }, function errorCallback(response) {
             toastr.error("Ocurrió un error");
