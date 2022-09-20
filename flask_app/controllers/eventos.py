@@ -55,4 +55,14 @@ def crear_evento():
     validacion['message'] = "Evento creado correctamente"
     return make_response(jsonify(validacion), 201)
 
+@app.route('/eventos/<id>/solicitar')
+def envento_usuarios_solicitud(id):
+    
+    if 'user_id' not in session:
+        return redirect('/logout')
+    
+    data = {
+        "id": int(id)
+    }
 
+    return render_template("solicitudes/index.html", id_evento=id, usuarios=User.get_all_sin_solicitud(data))

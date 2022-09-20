@@ -40,6 +40,16 @@ class User:
         return usuarios
     
     @classmethod
+    def get_all_sin_solicitud(cls, data):
+        query = "SELECT * FROM usuarios WHERE id NOT IN(SELECT usuario_id FROM solicitudes WHERE evento_id = %(id)s);"
+        results = connectToMySQL(cls.db_name).query_db(query, data)
+        usuarios = []
+        
+        for user in results:
+            usuarios.append( cls(user) )
+        return usuarios
+    
+    @classmethod
     def save(cls, data):
         query = "INSERT INTO usuarios(identificacion,nombres,apellidos,email,password,descripcion,direccion,celular,fecha_nacimiento,nacionalidad,avatar,video,rol_id,genero_id) VALUES(%(identificacion)s,%(nombres)s,%(apellidos)s,%(email)s,%(password)s,%(descripcion)s,%(direccion)s,%(celular)s,%(fecha_nacimiento)s,%(nacionalidad)s,%(avatar)s,%(video)s,%(rol_id)s,%(genero_id)s);"
         return connectToMySQL(cls.db_name).query_db( query, data )
