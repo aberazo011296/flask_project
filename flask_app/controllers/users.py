@@ -9,6 +9,7 @@ from flask_app.models.generos import Genero
 from flask_app.models.instrumentos import Instrumento
 from flask_app.models.instrumentos_usuarios import InstrumentoUsuario
 from flask_app.models.calificaciones_usuarios import CalificacionUsuario
+from flask_app.models.solicitudes import Solicitud
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
@@ -326,3 +327,19 @@ def calificar_usuario(id):
         "message": "Comentario creado correctamente"
     }
     return make_response(validacion, 201)
+
+@app.route('/usuario/<int:evento_id>/<int:usuario_id>/solicitar')
+def envento_usuarios_solicitud_crear(evento_id,usuario_id):
+    
+    if 'user_id' not in session:
+        return redirect('/logout')
+    
+    data = {
+        "evento_id":evento_id,
+        "usuario_id":usuario_id,
+        "estado":"pendiente"
+    }
+    
+    Solicitud.save(data)
+    
+    return redirect('/eventos/'+str(evento_id)+'/solicitar')

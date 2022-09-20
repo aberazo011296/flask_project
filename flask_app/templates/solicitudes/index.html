@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Eventos</title>
+        <title>Dashboard</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="/static/css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
@@ -62,58 +62,36 @@
                 <main>
                     <div ng-app="music_events" ng-controller="UsuarioCtrl">
                         <div class="container-fluid px-4">
-                            <h1 class="mt-4">Eventos</h1>
+                            <h1 class="mt-4">Usuarios</h1>
                             <br>
-                            <div class="row my-1">
-                                <div>
-                                    <a href="/eventos/nuevo" style="text-decoration:none" style="float: right">
-                                        <button class="btn btn-primary m-2" type="button">
-                                            Nuevo
-                                        </button>
-                                    </a>
-                                </div>
-                            </div>
                             <div class="row">
-                                <div class="card mb-4">
+                                <div class="card mb-4"">
                                     <div class="card-body">
                                         <table id="datatablesSimple">
                                             <thead>
                                                 <tr>
-                                                    <th>Título</th>
-                                                    <th>Dirección</th>
-                                                    <th>Fecha</th>
-                                                    <th>Hora Inicio</th>
-                                                    <th>Hora fin</th>
-                                                    <th>Tipo de Evento</th>
+                                                    <th>Identificación</th>
+                                                    <th>Nombres</th>
+                                                    <th>Apellidos</th>
+                                                    <th>Email</th>
                                                     <th>Opciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for evento in eventos %}
+                                                {% for usuario in usuarios %}
                                                     <tr>
-                                                        <td>{{evento.titulo}}</td>
-                                                        <td>{{evento.direccion}}</td>
-                                                        <td>{{evento.fecha}}</td>
-                                                        <td>{{evento.hora_inicio}}</td>
-                                                        <td>{{evento.hora_fin}}</td>
-                                                        <td>{{evento.opciones}}</td>
-                                                        
-                                                        <td style="text-align: center" class="d-flex justify-content-between">
-                                                            <a href="/eventos/{{evento.id}}" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-success" type="button">
+                                                        <td>{{usuario.identificacion}}</td>
+                                                        <td>{{usuario.nombres}}</td>
+                                                        <td>{{usuario.apellidos}}</td>
+                                                        <td>{{usuario.email}}</td>
+                                                        <td style="text-align: center">
+                                                            <a href="/usuario/{{usuario.id}}" style="text-decoration:none">
+                                                                <button class="btn btn-sm btn-primary" type="button">
                                                                     <i class="fa fa-paste"></i></button>
                                                             </a>
-                                                            <a href="/eventos/{{evento.id}}/editar" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-warning" type="button">
-                                                                    <i class="fa fa-edit"></i></button>
-                                                            </a>
-                                                            <a href="/eventos/{{evento.id}}/eliminar" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-danger" type="button">
-                                                                    <i class="fa fa-trash"></i></button>
-                                                            </a>
-                                                            <a href="/eventos/{{evento.id}}/solicitar" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-info" type="button">
-                                                                    <i class="fa fa-user-plus"></i></button>
+                                                            <a href="/usuario/{{id_evento}}/{{usuario.id}}/solicitar" style="text-decoration:none">
+                                                                <button class="btn btn-sm btn-success" type="button">
+                                                                    <i class="fa fa-plus"></i></button>
                                                             </a>
                                                         </td>
                                                     </tr>
