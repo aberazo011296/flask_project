@@ -11712,3 +11712,15 @@ body {
   background: -webkit-linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
   background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))
 }
+
+.stars {
+  font-size: 45px;
+}
+
+.checked-stars {
+  color: orange;
+}
+
+.unchecked-stars {
+  color: black;
+}
