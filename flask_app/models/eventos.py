@@ -1,6 +1,6 @@
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask import flash
-
+import json
 class Evento:
     db_destino = 'music_events'
 
@@ -11,19 +11,21 @@ class Evento:
         self.direccion = db_data['direccion']
         self.hora_inicio = db_data['hora_inicio']
         self.hora_fin = db_data['hora_fin']
+        self.opciones = db_data['opciones']
+        self.genero_id = db_data['genero_id']
         self.created_at = db_data['created_at']
         self.updated_at = db_data['updated_at']
 
     @classmethod
     def save(cls,data):
-        query = "INSERT INTO eventos (pasajero_identificacion, pasajero_nombre, descripcion, usuario_id) VALUES (%(pasajero_identificacion)s,%(pasajero_nombre)s,%(descripcion)s,%(usuario_id)s);"
+        query = "INSERT INTO eventos (titulo, fecha, direccion, hora_inicio, hora_fin, opciones, genero_id) VALUES (%(titulo)s,%(fecha)s,%(direccion)s,%(hora_inicio)s,%(hora_fin)s,%(opciones)s,%(genero_id)s );"
         return connectToMySQL(cls.db_destino).query_db(query, data)
 
     @classmethod
-    def get_all(cls,data):
+    def get_all(cls):
         
         query = "SELECT * FROM eventos;"
-        results = connectToMySQL(cls.db_destino).query_db(query,data)
+        results = connectToMySQL(cls.db_destino).query_db(query)
         
         eventos = []
         
@@ -35,7 +37,7 @@ class Evento:
         return eventos
 
     @classmethod
-    def get_all_user(cls,data):
+    def get_all_evento(cls,data):
         
         query = "SELECT * FROM eventos WHERE usuario_id = %(id)s;"
         results = connectToMySQL(cls.db_destino).query_db(query,data)
@@ -57,7 +59,7 @@ class Evento:
 
     @classmethod
     def update(cls, data):
-        query = "UPDATE eventos SET pasajero_identificacion = %(pasajero_identificacion)s, pasajero_nombre = %(pasajero_nombre)s, descripcion = %(descripcion)s WHERE id = %(id)s;"
+        query = "UPDATE eventos SET eventos_titulo = %(eventos_titulo)s, usuario_nombre = %(eventos_titulo)s, descripcion = %(descripcion)s WHERE id = %(id)s;"
         return connectToMySQL(cls.db_destino).query_db( query, data )
         
     @classmethod
@@ -66,18 +68,67 @@ class Evento:
         return connectToMySQL(cls.db_destino).query_db( query, data )
 
     @staticmethod
-    def validate_evento(evento):
+    def validate_eventos(evento):
         
         is_valid = True
+        categoria = "register"
+        mensaje = "Exitoso"
+        status = 'ok'
+        code = 200
         
-        if len(evento['pasajero_identificacion']) < 3:
-            is_valid = False
-            flash("Identificación debe tener al menos 3 characters","evento")
-        if len(evento['pasajero_nombre']) < 3:
-            is_valid = False
-            flash("Nombre debe tener al menos 3 characters","evento")
-        if len(evento['descripcion']) < 3:
-            is_valid = False
-            flash("Descripción debe tener al menos 3 characters","evento")
+
+        if len(evento['titulo']) < 3:
+            mensaje = "El titulo debe tener por lo menos 3 caracteres"
+            is_valid= False
+            status = 'error'
+            code = 400
             
-        return is_valid
+        # if len(evento['apellidos']) < 3:
+        #     mensaje = "Apellidos debe tener por lo menos 3 caracteres"
+        #     is_valid= False
+        #     status = 'error'
+        #     code = 400
+            
+        # if not EMAIL_REGEX.match(evento['email']):
+        #     mensaje = "Formato Email incorrecto"
+        #     is_valid=False
+        #     status = 'error'
+        #     code = 400
+            
+        # if not re.search(PASSWORD_REGEX, evento['password']):
+        #     mensaje = "Contraseña debe tener números, letras mayúsculas y minúculas, caracteres especiales"
+        #     is_valid=False
+        #     status = 'error'
+        #     code = 400
+
+        # if len(evento['password']) < 8:
+        #     mensaje = "Contraseña debe tener por lo menos 8 caracteres"
+        #     is_valid= False
+        #     status = 'error'
+        #     code = 400
+
+        # if evento['password'] != evento['confirm']:
+        #     mensaje = "Contraseñas no coinciden"
+        #     is_valid= False
+        #     status = 'error'
+        #     code = 400
+        
+        # fecha_nacimiento = datetime.strptime(evento['fecha_nacimiento'], '%Y-%m-%d')
+
+        # edad = Evento.calculate_age(fecha_nacimiento)
+        
+        # if(edad < 18):
+        #     mensaje = "Usuario menor de edad"
+        #     is_valid= False
+        #     status = 'error'
+        #     code = 400
+            
+        value = {
+            "valid": is_valid,
+            "message": mensaje,
+            "category": categoria,
+            "status": status,
+            "code": code
+        }
+        
+        return json.dumps(value)
