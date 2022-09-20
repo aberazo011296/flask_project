@@ -30,9 +30,9 @@ class User:
         self.updated_at = data['updated_at']
         
     @classmethod
-    def get_all(cls):
-        query = "SELECT * FROM usuarios;"
-        results = connectToMySQL(cls.db_name).query_db(query)
+    def get_all(cls,data):
+        query = "SELECT * FROM usuarios WHERE id != %(id)s;"
+        results = connectToMySQL(cls.db_name).query_db(query,data)
         usuarios = []
         
         for user in results:

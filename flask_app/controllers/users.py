@@ -96,9 +96,10 @@ def dashboard():
     }
     rol = Rol.get_one(data_rol).nombre
     
-    eventos=Evento.get_all()
+    eventos_ok=Evento.get_all_by_user_ok(data)
+    eventos_new=Evento.get_all_by_user_new(data)
         
-    return render_template("index.html",user=user,eventos=eventos,rol=rol)
+    return render_template("index.html",user=user,eventos_ok=eventos_ok,eventos_new=eventos_new,rol=rol)
 
 @app.route('/usuarios')
 def get_usuarios():
@@ -114,7 +115,7 @@ def get_usuarios():
     }
     rol = Rol.get_one(data_rol).nombre
     
-    usuarios=User.get_all()
+    usuarios=User.get_all(data)
 
     return render_template("usuarios/index.html",user=user,usuarios=usuarios,rol=rol)
 
@@ -343,3 +344,19 @@ def envento_usuarios_solicitud_crear(evento_id,usuario_id):
     Solicitud.save(data)
     
     return redirect('/eventos/'+str(evento_id)+'/solicitar')
+
+@app.route('/dashboard/<int:evento_id>/<int:usuario_id>/solicitar')
+def envento_usuarios_solicitud_dashboard(evento_id,usuario_id):
+    
+    if 'user_id' not in session:
+        return redirect('/logout')
+    
+    data = {
+        "evento_id":evento_id,
+        "usuario_id":usuario_id,
+        "estado":"pendiente"
+    }
+    
+    Solicitud.save(data)
+    
+    return redirect('/dashboard')

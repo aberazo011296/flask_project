@@ -1,6 +1,5 @@
 from flask import render_template, redirect, session, request, flash, jsonify, make_response
 import json
-import decimal 
 from flask_app import app
 from flask_app.models.user import User
 from flask_app.models.eventos import Evento
@@ -24,56 +23,60 @@ def get_solicitudes():
     }
     rol = Rol.get_one(data_rol).nombre
     
-    solicitudes=User.get_all()
+    solicitudes_musico=Solicitud.get_all(data)
+    solicitudes_creador_eventos=Solicitud.get_all_eventos_usuario(data)
 
-    return render_template("solicitudes/index.html",user=user,solicitudes=solicitudes,rol=rol)
+    return render_template("solicitudes/usuario_index.html",user=user,solicitudes_musico=solicitudes_musico,solicitudes_creador_eventos=solicitudes_creador_eventos,rol=rol)
 
 @app.route("/solicitudes/nuevo")
 def solicitudes_nuevo():
     return render_template("solicitudes/new.html")
 
-@app.route('/crear/solicitud', methods=['POST'])
-def crear_solicitud():
+@app.route('/editar/solicitud/<evento_id>/<usuario_id>', methods=['POST'])
+def editar_solicitud(evento_id,usuario_id):
     
     datos = json.loads(request.data)
-    solicitud = datos['solicitud']
+    estado = datos['estado']
+    num_integrantes = datos['num_integrantes']
+    integrantes = 0
     
-    solicitud['fecha_nacimiento'] = solicitud['fecha_nacimiento'].split("T")[0]
+    data_eventos = {
+        "id": int(evento_id)
+    }
     
-    validacion = json.loads(User.validate_solicitud(solicitud))
+    integrantes = Solicitud.get_all_by_evento(data_eventos)
     
-    if not validacion['valid']:
-        return make_response(jsonify(validacion), 201)
+    if(int(num_integrantes) == int(integrantes)):
+        
+        data = {
+            "evento_id": int(evento_id),
+            "usuario_id": int(usuario_id),
+            "estado" : 'cancelado (cupo)'
+        }
+            
+        Solicitud.update(data)
+    
+        return make_response(jsonify(
+            status='ok',
+            message='Evento llenó su cupo',
+            evento_id= evento_id,
+            usuario_id= usuario_id,
+        ), 201)
     
     data = {
-        "identificacion" : solicitud['identificacion'],
-        "nombres" : solicitud['nombres'],
-        "apellidos" : solicitud['apellidos'],
-        "email" : solicitud['email'],
-        "password": bcrypt.generate_password_hash(solicitud['password']),
-        "descripcion" : solicitud['descripcion'],
-        "direccion" : solicitud['direccion'],
-        "celular" : solicitud['celular'],
-        "fecha_nacimiento" : solicitud['fecha_nacimiento'],
-        "nacionalidad" : solicitud['nacionalidad'],
-        "avatar" : solicitud['avatar'],
-        "video" : solicitud['video'],
-        "rol_id" : solicitud['rol_id'],
-        "genero_id" : solicitud['genero_id']
+        "evento_id": int(evento_id),
+        "usuario_id": int(usuario_id),
+        "estado" : estado
     }
         
-    id = User.save(data)
+    Solicitud.update(data)
     
-    for instrumento in solicitud['instrumentos_ids']:
-        data = {
-            "instrumento_id" : int(instrumento),
-            "solicitud_id" : int(id)
-        }
-    
-    session['user_id'] = id
-
-    validacion['message'] = "Solicitud ingresado correctamente"
-    return make_response(jsonify(validacion), 201)
+    return make_response(jsonify(
+            status='ok',
+            message='solicitud actualizada',
+            evento_id= evento_id,
+            usuario_id= usuario_id,
+        ), 201)
 
 @app.route('/solicitud/<int:id>/eliminar')
 def destroy_solicitud(id):
