@@ -1,5 +1,7 @@
-from flask import render_template, redirect, session, request, flash, jsonify, make_response
+from flask import render_template, redirect, session, request, flash, jsonify, make_response, url_for
 from flask_mail import Mail, Message
+import os
+# import urllib.request
 import json
 import decimal 
 from flask_app import app
@@ -11,9 +13,16 @@ from flask_app.models.instrumentos import Instrumento
 from flask_app.models.instrumentos_usuarios import InstrumentoUsuario
 from flask_app.models.calificaciones_usuarios import CalificacionUsuario
 from flask_app.models.solicitudes import Solicitud
+from werkzeug.utils import secure_filename
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
+
+UPLOAD_FOLDER = 'flask_app/static/imgs/'
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif']) #ya esta en el front/no
 
 app.config['MAIL_SERVER']='smtp.mailtrap.io'
 app.config['MAIL_PORT'] = 2525
@@ -43,7 +52,31 @@ def create_user():
     
     if not validacion['valid']:
         return make_response(jsonify(validacion), 400)
-    
+
+    if 'avatar' not in request.files:
+        return make_response(jsonify(
+            status='error',
+            message='No existe archivo'
+            ), 400)
+
+    file = request.files['avatar']
+    if file.filename == '':
+        return make_response(jsonify(
+            status='error',
+            message='No se subio ningun archivo'
+            ), 400)
+
+    if file and allowed_file (file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    else:
+        return make_response(jsonify(
+            status='error',
+            message='Solo imagenes - png, jpg, etc'
+            ), 400)
+
+
     data = {
         "identificacion" : request.form['identificacion'],
         "nombres" : request.form['nombres'],
@@ -407,3 +440,12 @@ def envento_usuarios_solicitud_dashboard(evento_id,usuario_id):
     mail.send(msg1)
     
     return redirect('/dashboard')
+
+#imagenes:
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/display/<filename>')
+def display_image(filename):
+    return redirect(url_for('static', filename = 'imgs/' + filename), code=301)
+
