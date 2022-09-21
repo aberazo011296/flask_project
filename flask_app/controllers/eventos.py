@@ -66,3 +66,100 @@ def envento_usuarios_solicitud(id):
     }
 
     return render_template("solicitudes/index.html", id_evento=id, usuarios=User.get_all_sin_solicitud(data))
+
+    #EDIT.......
+
+@app.route('/eventos/<int:id>/editar')
+def evento_editar(id):
+    if 'user_id' not in session:
+        return redirect('/logout')
+    return render_template("eventos/edit_evento.html", generos=Genero.get_all(), id=id, instrumentos=Instrumento.get_all())
+
+@app.route('/eventos/obtener/<id>')
+def get_evento(id):
+    print("HOLAAAA")
+
+    
+    data = {
+        "id":int(id)
+    }
+    print("HOLAAAA")
+    evento_get=Evento.get_one(data)
+    
+    instrumentos = InstrumentoEvento.get_by_evento(data)
+    instrumentos_ids = []
+    for instrumento in instrumentos:
+        instrumentos_ids.append(str(instrumento.instrumento_id))
+    print("HOLAAAA")
+    evento = {
+        "titulo" : evento_get.titulo,
+        "direccion" : evento_get.direccion,
+        "fecha" : str(evento_get.fecha),
+        "hora_inicio" : str(evento_get.hora_inicio),
+        "hora_fin" : str(evento_get.hora_fin),
+        "opciones" : evento_get.opciones,
+        "genero_id" : str(evento_get.genero_id),
+        "instrumentos_ids" : instrumentos_ids
+    }
+        
+
+    return make_response(jsonify(
+            status='ok',
+            message='Evento encontrado',
+            evento= evento
+            ), 200)
+    #guardar base de datos
+
+@app.route('/editar/eventos/<id>', methods=['POST'])
+def editar_evento(id):
+    print("holaaaaaa")
+    print(id)
+    datos = json.loads(request.data)
+    evento = datos['evento']
+    
+    evento['fecha'] = evento['fecha'].split("T")[0]
+    
+    validacion = json.loads(Evento.validate_eventos(evento))
+    
+    if not validacion['valid']:
+        return make_response(jsonify(validacion), 400)
+    
+    
+    data = {
+        "titulo" : evento['titulo'],
+        "direccion" : evento['direccion'],
+        "fecha" : evento['fecha'],
+        "hora_inicio" : evento['hora_inicio'],
+        "hora_fin" : evento['hora_fin'],
+        "opciones" : evento['opciones'],
+        "genero_id" : evento['genero_id'],
+        "usuario_id" :int(session['user_id']),
+        "id" : id
+    }
+        
+    Evento.update(data)
+    
+    data_instrumentos = {
+        "id":id
+    }
+    InstrumentoEvento.delete_by_evento(data_instrumentos)
+    print("holaaaaaaaa")
+    print(evento['instrumentos_ids'])
+    for instrumento in evento['instrumentos_ids']:
+        data = {
+            "instrumento_id" : int(instrumento),
+            "evento_id" : id
+        }
+        InstrumentoEvento.save(data)
+    
+    validacion['message'] = "Evento actualizado correctamente"
+    return make_response(jsonify(validacion), 201)
+
+@app.route('/eventos/<id>/eliminar')
+def eliminar_evento(id):
+    data = {
+            "evento_id" : int(id)
+        
+        }
+    Evento.delete(data)
+    return redirect ("/eventos")

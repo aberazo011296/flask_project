@@ -72,5 +72,36 @@ app.controller('EventoCtrl', function ($scope, $http) {
     setTimeout(function () {
         $('.selectpicker').selectpicker('refresh');
     }, 1000);
+    
+    $scope.getEvento = function (evento_id) {
+        $http({
+            method: 'GET',
+            url: $scope.api_server + 'eventos/obtener/' + evento_id
+        }).then(function successCallback(response) {
 
+            $scope.evento = response.data.evento;
+
+        }, function errorCallback(response) {
+            toastr.error("No se encontró URL");
+        });
+    };
+
+    $scope.update = function (id) {
+        $http({
+            method: 'POST',
+            url: $scope.api_server + 'editar/eventos/'+id,
+            data: {
+                evento: $scope.evento
+            }
+        }).then(function successCallback(response) {
+
+            toastr.success(response.data.message);
+            setTimeout(function () {
+                window.location.href = $scope.api_server+'eventos';
+            }, 2000);
+
+        }, function errorCallback(response) {
+            toastr.error("Ocurrió un error");
+        });
+    };
 });

@@ -60,13 +60,18 @@ class Evento:
 
     @classmethod
     def update(cls, data):
-        query = "UPDATE eventos SET eventos_titulo = %(eventos_titulo)s, usuario_nombre = %(eventos_titulo)s, descripcion = %(descripcion)s WHERE id = %(id)s;"
+        query = "UPDATE eventos SET titulo = %(titulo)s, fecha = %(fecha)s, direccion = %(direccion)s,hora_inicio = %(hora_inicio)s,hora_fin = %(hora_fin)s,opciones = %(opciones)s,genero_id = %(genero_id)s,usuario_id = %(usuario_id)s,updated_at = NOW() WHERE id = %(id)s;"
         return connectToMySQL(cls.db_destino).query_db( query, data )
         
     @classmethod
     def delete(cls, data):
-        query  = "DELETE FROM eventos WHERE id = %(id)s"
+        query  = "DELETE FROM eventos_instrumentos WHERE evento_id = %(evento_id)s"
+        connectToMySQL(cls.db_destino).query_db( query, data )
+        query  = "DELETE FROM solicitudes WHERE evento_id = %(evento_id)s"
+        connectToMySQL(cls.db_destino).query_db( query, data )
+        query  = "DELETE FROM eventos WHERE id = %(evento_id)s"
         return connectToMySQL(cls.db_destino).query_db( query, data )
+
 
     @staticmethod
     def validate_eventos(evento):
@@ -84,45 +89,7 @@ class Evento:
             status = 'error'
             code = 400
             
-        # if len(evento['apellidos']) < 3:
-        #     mensaje = "Apellidos debe tener por lo menos 3 caracteres"
-        #     is_valid= False
-        #     status = 'error'
-        #     code = 400
-            
-        # if not EMAIL_REGEX.match(evento['email']):
-        #     mensaje = "Formato Email incorrecto"
-        #     is_valid=False
-        #     status = 'error'
-        #     code = 400
-            
-        # if not re.search(PASSWORD_REGEX, evento['password']):
-        #     mensaje = "Contraseña debe tener números, letras mayúsculas y minúculas, caracteres especiales"
-        #     is_valid=False
-        #     status = 'error'
-        #     code = 400
 
-        # if len(evento['password']) < 8:
-        #     mensaje = "Contraseña debe tener por lo menos 8 caracteres"
-        #     is_valid= False
-        #     status = 'error'
-        #     code = 400
-
-        # if evento['password'] != evento['confirm']:
-        #     mensaje = "Contraseñas no coinciden"
-        #     is_valid= False
-        #     status = 'error'
-        #     code = 400
-        
-        # fecha_nacimiento = datetime.strptime(evento['fecha_nacimiento'], '%Y-%m-%d')
-
-        # edad = Evento.calculate_age(fecha_nacimiento)
-        
-        # if(edad < 18):
-        #     mensaje = "Usuario menor de edad"
-        #     is_valid= False
-        #     status = 'error'
-        #     code = 400
             
         value = {
             "valid": is_valid,

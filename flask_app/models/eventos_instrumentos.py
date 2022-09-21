@@ -55,3 +55,21 @@ class InstrumentoEvento:
             flash("nombre debe tener al menos 3 characters","tramo")
             
         return is_valid
+
+    @classmethod
+    def get_by_evento(cls,data):
+        query = "SELECT instrumento_id FROM eventos_instrumentos WHERE evento_id = %(id)s;"
+        results = connectToMySQL(cls.db_destino).query_db(query,data)
+        instrumentos = []
+        
+        if len(results) >= 1:
+            for row in results:
+                instrumentos.append(cls(row))
+            print(instrumentos)
+            
+        return instrumentos
+
+    @classmethod
+    def delete_by_evento(cls, data):
+        query  = "DELETE FROM eventos_instrumentos WHERE evento_id = %(id)s;"
+        return connectToMySQL(cls.db_destino).query_db(query, data)

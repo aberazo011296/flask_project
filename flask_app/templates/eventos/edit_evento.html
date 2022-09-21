@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Editar Evento</title>
+    <link href="/static/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+    <script src="/static/js/eventos.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+    <script src="/static/js/scripts.js"></script>
+</head>
+
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand ps-3" href="index.html">Hermes</a>
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+                class="fas fa-bars"></i></button>
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        </form>
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <a class="nav-link" href="/dashboard">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Dashboard
+                        </a>
+                        <a class="nav-link" href="/eventos">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                            Eventos
+                        </a>
+                        <a class="nav-link" href="/eventos">
+                            <div class="sb-nav-link-icon"><i class="fas fa-edit"></i></div>
+                            Eventos
+                        </a>
+                        <a class="nav-link" href="/bandas">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Bandas
+                        </a>
+                        <a class="nav-link" href="/solicitudes">
+                            <div class="sb-nav-link-icon"><i class="fa fa-bell"></i></div>
+                            Solicitudes
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main style="background: #f4f6fa">
+                <div ng-app="music_events" ng-controller="EventoCtrl">
+                    <div class="container-fluid px-4" ng-init="getEvento({{id}})">
+                        <h1 class="mt-4">Editar Evento</h1>
+                        <form name="eventos_form" role="form" method="post" class="col-12 px-4 py-1 pb-4 my-4 mx-auto bg-white" ng-submit="update({{id}})">
+                            <div class="form-group">
+                                <label>Titulo:</label>
+                                <input type="text" ng-model="evento.titulo" name="titulo" class="form-control" placeholder="Ingresar Titulo" ng-minlength="3" ng-maxlength="45" required>
+                                <div class="m-t-xs ng-hide" ng-show="eventos_form.titulo.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="eventos_form.titulo.$error.minlength">Titulo Obligatoria</small>
+                                    <small class="text-danger ng-hide" ng-show="eventos_form.titulo.$error.maxlength">El titulo Debe Contener Almenos</small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Direccion:</label>
+                                <input type="text" ng-model="evento.direccion" name="direccion" class="form-control" placeholder="Ingresar Direccion" ng-minlength="3" ng-maxlength="45" required>
+                                <div class="m-t-xs ng-hide" ng-show="eventos_form.direccion.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="eventos_form.nombres.$error.minlength">Direccion Obligatoria</small>
+                                    <small class="text-danger ng-hide" ng-show="eventos_form.nombres.$error.maxlength">La Direccion Debe Contener Almenos</small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha:</label>
+                                <input type="date" ng-model="evento.fecha" name="fecha" class="form-control" placeholder="Ingrese Fecha" ng-minlength="3" ng-maxlength="45" required>
+                                <div class="m-t-xs ng-hide" ng-show="eventos_form.fecha.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="eventos_form.fecha.$error.minlength"></small>
+                                    <small class="text-danger ng-hide" ng-show="eventos_form.fecha.$error.maxlength"></small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Hora Inicio:</label>
+                                <input type="datetime" ng-model="evento.hora_inicio" name="hora_inicio" cols="10" rows="3" class="form-control" placeholder="Ingrese Hora de Inicio" ng-minlength="3" required></input>
+                                <div class="m-t-xs ng-hide" ng-show="eventos_form.hora_inicio.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="eventos_form.hora_inicio.$error.minlength"></small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Hora Fin:</label>
+                                <input type="datetime" ng-model="evento.hora_fin" name="hora_fin" cols="10" rows="3" class="form-control" placeholder="Ingrese Hora de Fin" ng-minlength="3" required></input>
+                                <div class="m-t-xs ng-hide" ng-show="eventos_form.hora_fin.$invalid">
+                                    <small class="text-danger ng-hide" ng-show="eventos_form.hora_fin.$error.minlength"></small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Opcion de Evento:</label>
+                                <select ng-model="evento.opciones" class="form-control selectpicker" data-live-search="true" required>
+                                    <option value="ensayo">Ensayo</option>
+                                    <option value="audicion">Audicion</option>
+                                    <option value="concierto">Concierto</option>
+                                    
+                                
+                                </select>
+                                <div class="invalid-feedback">
+                                    Campo requerido
+                                </div>
+                            
+                            <div class="form-group">
+                                <label>Género Musical:</label>
+                                <select ng-model="evento.genero_id" class="form-control selectpicker" data-live-search="true" required>
+                                    <option value=""></option>
+                                    {% for genero in generos %}
+                                    <option value="{{genero.id}}">{{genero.nombre}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Campo requerido
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Instrumentos:</label>
+                                <select ng-model="evento.instrumentos_ids" class="form-control selectpicker" multiple data-live-search="true" required>
+                                    <option value=""></option>
+            
+                                    {% for instrumento in instrumentos %}
+                                    <option value="{{instrumento.id}}">{{instrumento.nombre}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Campo requerido
+                                </div>
+                                <div class="col-12 mt-5">
+                                    <a href="/eventos" class="btn btn-danger m-1">Cancelar</a>
+                                    <input type="submit" value="Guardar" class="btn btn-primary" style="float: right;">
+                                </div>
+                            </div>
+                
+                        </form>
+                    </div>
+                </div>
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Hermes - C02 2022</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+
+</html>
