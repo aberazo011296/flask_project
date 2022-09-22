@@ -33,6 +33,16 @@ class Bandas:
         return all_bandas
     
     @classmethod
+    def get_all_by_user(cls, data):
+        query = "SELECT * FROM bandas WHERE usuario_id = %(id)s;"
+        results =  connectToMySQL(cls.db_name).query_db(query, data)
+        all_bandas = []
+        for row in results:
+            print(row['nombre'])
+            all_bandas.append( cls(row) )
+        return all_bandas
+    
+    @classmethod
     def get_one(cls,data):
         query = "SELECT * FROM bandas WHERE id = %(id)s;"
         results = connectToMySQL(cls.db_name).query_db(query,data)
