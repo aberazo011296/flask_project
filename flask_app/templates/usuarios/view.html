@@ -83,8 +83,8 @@
                                                 <div class="col-md-4 gradient-custom text-center text-white d-flex justify-content-center align-items-center"
                                                     style="flex-direction: column;"
                                                     style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-                                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                                        alt="Avatar" class="img-fluid my-2" style="width: 30%;" />
+                                                    <img src= "{{url_for('display_image',filename= usuario.avatar)}}" 
+                                                        alt="{{usuario.avatar}}" class="img-fluid my-2" style="width: 30%;" />
                                                     <h2> {{usuario.nombres}} {{usuario.apellidos}}</h2>
                                                     <h2>{{genero.nombre}}</h2>
                                                 </div>
