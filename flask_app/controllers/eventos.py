@@ -41,6 +41,7 @@ def crear_evento():
         "hora_inicio" : eventos['hora_inicio'],
         "hora_fin" : eventos['hora_fin'],
         "opciones" : eventos['opciones'],
+        "num_integrantes" : int(eventos['num_integrantes']),
         "genero_id" : eventos['genero_id'],
         "usuario_id": int(session['user_id'])
     }
@@ -102,6 +103,7 @@ def get_evento(id):
         "hora_inicio" : str(evento_get.hora_inicio),
         "hora_fin" : str(evento_get.hora_fin),
         "opciones" : evento_get.opciones,
+        "num_integrantes" : evento_get.num_integrantes,
         "genero_id" : str(evento_get.genero_id),
         "instrumentos_ids" : instrumentos_ids
     }
@@ -136,6 +138,7 @@ def editar_evento(id):
         "hora_inicio" : evento['hora_inicio'],
         "hora_fin" : evento['hora_fin'],
         "opciones" : evento['opciones'],
+        "num_integrantes" : evento['num_integrantes'],
         "genero_id" : evento['genero_id'],
         "usuario_id" :int(session['user_id']),
         "id" : id

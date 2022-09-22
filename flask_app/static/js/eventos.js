@@ -10,6 +10,7 @@ app.controller('EventoCtrl', function ($scope, $http) {
         hora_inicio: '',
         hora_fin: '',
         opciones: '',
+        num_integrantes:'',
         genero_id: '',
         instrumentos_ids:[]
     };
