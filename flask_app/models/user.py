@@ -310,3 +310,14 @@ class User:
         }
         
         return json.dumps(value)
+
+
+    @classmethod
+    def get_all_sin_solicitud_bandas(cls, data):
+        query = "SELECT * FROM usuarios WHERE id NOT IN(SELECT usuario_id FROM solicitudes_bandas WHERE banda_id = %(id)s) AND id != %(usuario_id)s AND rol_id != 1;"
+        results = connectToMySQL(cls.db_name).query_db(query, data)
+        usuarios = []
+        
+        for user in results:
+            usuarios.append( cls(user) )
+        return usuarios

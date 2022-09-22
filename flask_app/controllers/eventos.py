@@ -1,5 +1,6 @@
 from flask import render_template, redirect, session, request, flash, jsonify, make_response
 import json
+import decimal
 from flask_app import app
 from flask_app.models.user import User
 from flask_app.models.eventos import Evento
@@ -7,13 +8,26 @@ from flask_app.models.roles import Rol
 from flask_app.models.generos import Genero
 from flask_app.models.instrumentos import Instrumento
 from flask_app.models.eventos_instrumentos import InstrumentoEvento
+from flask_app.models.calificaciones_eventos import CalificacionEvento
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
 
 @app.route("/eventos")
 def eventos():
-    return render_template ("eventos/index_eventos.html", eventos=Evento.get_all())
+    data={
+        'id':session['user_id']
+    }
+    user=User.get_by_id(data)
+    data_rol={
+        'id':user.rol_id
+    }
+    rol=Rol.get_one(data_rol).nombre
+    if rol== "administrador":
+        eventos=Evento.get_all()
+    else:
+        eventos=Evento.get_all_evento(data)
+    return render_template ("eventos/index_eventos.html", eventos=eventos,user=user,rol=rol)
 
 @app.route("/eventos/nuevo")
 def eventos_nuevo():
@@ -39,6 +53,7 @@ def crear_evento():
         "hora_inicio" : eventos['hora_inicio'],
         "hora_fin" : eventos['hora_fin'],
         "opciones" : eventos['opciones'],
+        "num_integrantes" : int(eventos['num_integrantes']),
         "genero_id" : eventos['genero_id'],
         "usuario_id": int(session['user_id'])
     }
@@ -66,8 +81,16 @@ def envento_usuarios_solicitud(id):
         "id": int(id),
         "usuario_id": int(session['user_id'])
     }
+    data_user={
+        'id':session['user_id']
+    }
+    user=User.get_by_id(data_user)
+    data_rol={
+        'id':user.rol_id
+    }
+    rol=Rol.get_one(data_rol).nombre
 
-    return render_template("solicitudes/index.html", id_evento=id, usuarios=User.get_all_sin_solicitud(data))
+    return render_template("solicitudes/index.html", id_evento=id, usuarios=User.get_all_sin_solicitud(data),user=user,rol=rol)
 
     #EDIT.......
 
@@ -100,6 +123,7 @@ def get_evento(id):
         "hora_inicio" : str(evento_get.hora_inicio),
         "hora_fin" : str(evento_get.hora_fin),
         "opciones" : evento_get.opciones,
+        "num_integrantes" : evento_get.num_integrantes,
         "genero_id" : str(evento_get.genero_id),
         "instrumentos_ids" : instrumentos_ids
     }
@@ -134,6 +158,7 @@ def editar_evento(id):
         "hora_inicio" : evento['hora_inicio'],
         "hora_fin" : evento['hora_fin'],
         "opciones" : evento['opciones'],
+        "num_integrantes" : evento['num_integrantes'],
         "genero_id" : evento['genero_id'],
         "usuario_id" :int(session['user_id']),
         "id" : id
@@ -165,3 +190,54 @@ def eliminar_evento(id):
         }
     Evento.delete(data)
     return redirect ("/eventos")
+
+    #VER EVENTO
+
+@app.route('/eventos/<int:id>')
+def evento_ver(id):
+    if 'user_id' not in session:
+        return redirect('/logout')
+    
+    data = {
+            "id":id
+    }
+    evento=Evento.get_one(data)
+    
+    data_genero = {
+        "id":evento.genero_id
+    }
+    genero = Genero.get_one(data_genero)
+    
+    resultado = CalificacionEvento.get_avg(data)
+    calificacion_promedio = 0
+    if(resultado[0]['promedio'] is not None):
+        round_num = resultado[0]['promedio']
+        calificacion_promedio = decimal.Decimal(round_num).quantize(decimal.Decimal('0'), rounding=decimal.ROUND_HALF_UP)
+        calificacion_promedio = int(calificacion_promedio)
+    
+    return render_template("eventos/view_evento.html", id=id, instrumentos=Instrumento.get_instrumentos_evento(data), evento=evento, genero=genero, calificacion=calificacion_promedio)
+
+    #Calificar Evento
+
+@app.route('/eventos/<int:id>/calificar')
+def evento_calificar(id):
+    if 'user_id' not in session:
+        return redirect('/logout')
+    return render_template("eventos/rating_evento.html", id=id)
+
+@app.route('/calificar/evento/<id>', methods=['POST'])
+def calificar_evento(id):
+    
+    datos = json.loads(request.data)
+    
+    data = {
+        "evento_id": int(id),
+        "puntuacion" : datos['calificacion']
+    }
+    
+    CalificacionEvento.save(data)
+    
+    validacion = {
+        "message": "Comentario creado correctamente"
+    }
+    return make_response(validacion, 201)

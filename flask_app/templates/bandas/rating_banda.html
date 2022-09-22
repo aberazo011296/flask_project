@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Calificar Usuario</title>
+    <title>Calificar Banda</title>
     <link href="/static/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -17,7 +17,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
-    <script src="/static/js/usuarios.js"></script>
+    <script src="/static/js/banda.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
     <script src="/static/js/scripts.js"></script>
@@ -103,10 +103,10 @@
         </div>
         <div id="layoutSidenav_content">
             <main style="background: #f4f6fa">
-                <div ng-app="music_events" ng-controller="UsuarioCtrl">
-                    <div class="container-fluid px-4" ng-init="getUsuario({{id}})">
+                <div ng-app="music_events" ng-controller="BandaCtrl">
+                    <div class="container-fluid px-4" ng-init="getBanda({{id}})">
                         <form name="rating_form" role="form" method="post" class="col-12 px-4 py-1 pb-4 my-4 mx-auto bg-white" ng-submit="rating({{id}})">
-                            <h1 class="mt-4">Calificar Usuario</h1>
+                            <h1 class="mt-4">Calificar Banda</h1>
                             <div style="text-align: center">
                                 <span class="rating__result"></span> 
                                 <a ng-click="calificar(1)" class="btn p-0" style="margin-top: 25px">
@@ -126,7 +126,7 @@
                                 </a>
                             </div>
                             <div class="col-12 mt-5">
-                                <a href="/usuarios" class="btn btn-danger m-1">Cancelar</a>
+                                <a href="/bandas" class="btn btn-danger m-1">Cancelar</a>
                                 <input type="submit" value="Guardar" class="btn btn-primary" style="float: right;">
                             </div>
                         </form>

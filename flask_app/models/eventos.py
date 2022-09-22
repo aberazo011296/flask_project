@@ -12,6 +12,7 @@ class Evento:
         self.hora_inicio = db_data['hora_inicio']
         self.hora_fin = db_data['hora_fin']
         self.opciones = db_data['opciones']
+        self.num_integrantes = db_data['num_integrantes']
         self.genero_id = db_data['genero_id']
         self.usuario_id = db_data['usuario_id']
         self.created_at = db_data['created_at']
@@ -19,7 +20,7 @@ class Evento:
 
     @classmethod
     def save(cls,data):
-        query = "INSERT INTO eventos (titulo, fecha, direccion, hora_inicio, hora_fin, opciones, genero_id, usuario_id) VALUES (%(titulo)s,%(fecha)s,%(direccion)s,%(hora_inicio)s,%(hora_fin)s,%(opciones)s,%(genero_id)s,%(usuario_id)s );"
+        query = "INSERT INTO eventos (titulo, fecha, direccion, hora_inicio, hora_fin, opciones, num_integrantes, genero_id, usuario_id) VALUES (%(titulo)s,%(fecha)s,%(direccion)s,%(hora_inicio)s,%(hora_fin)s,%(opciones)s,%(num_integrantes)s,%(genero_id)s,%(usuario_id)s );"
         return connectToMySQL(cls.db_destino).query_db(query, data)
 
     @classmethod
@@ -60,7 +61,7 @@ class Evento:
 
     @classmethod
     def update(cls, data):
-        query = "UPDATE eventos SET titulo = %(titulo)s, fecha = %(fecha)s, direccion = %(direccion)s,hora_inicio = %(hora_inicio)s,hora_fin = %(hora_fin)s,opciones = %(opciones)s,genero_id = %(genero_id)s,usuario_id = %(usuario_id)s,updated_at = NOW() WHERE id = %(id)s;"
+        query = "UPDATE eventos SET titulo = %(titulo)s, fecha = %(fecha)s, direccion = %(direccion)s,hora_inicio = %(hora_inicio)s,hora_fin = %(hora_fin)s,opciones = %(opciones)s,num_integrantes = %(num_integrantes)s, genero_id = %(genero_id)s,usuario_id = %(usuario_id)s,updated_at = NOW() WHERE id = %(id)s;"
         return connectToMySQL(cls.db_destino).query_db( query, data )
         
     @classmethod

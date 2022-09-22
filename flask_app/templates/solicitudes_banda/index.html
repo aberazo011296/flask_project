@@ -12,6 +12,7 @@
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/static/js/usuarios.js"></script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -92,59 +93,38 @@
             </div>
             <div id="layoutSidenav_content">
                 <main>
-                    <div ng-app="music_events" ng-controller="bandaCtrl">
+                    <div ng-app="music_events" ng-controller="UsuarioCtrl">
                         <div class="container-fluid px-4">
-                            <h1 class="mt-4">Bandas</h1>
+                            <h1 class="mt-4">Usuarios</h1>
                             <br>
-                            <div class="row my-1">
-                                <div>
-                                    <a href="/new/banda" style="text-decoration:none" style="float: right">
-                                        <button class="btn btn-primary m-2" type="button">
-                                            Nueva Banda
-                                        </button>
-                                    </a>
-                                </div>
-                            </div>
                             <div class="row">
                                 <div class="card mb-4">
                                     <div class="card-body">
                                         <table id="datatablesSimple">
                                             <thead>
                                                 <tr>
-                                                    <th>Nombre:</th>
-                                                    <th>Numero de integrantes</th>
-                                                    <th>Celular</th>
+                                                    <th>Identificación</th>
+                                                    <th>Nombres</th>
+                                                    <th>Apellidos</th>
                                                     <th>Email</th>
                                                     <th>Opciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for banda in bandas %}
+                                                {% for usuario in usuarios %}
                                                     <tr>
-                                                        <td>{{banda.nombre}}</td>
-                                                        <td>{{banda.num_integrantes}}</td>
-                                                        <td>{{banda.celular}}</td>
-                                                        <td>{{banda.email}}</td>
+                                                        <td>{{usuario.identificacion}}</td>
+                                                        <td>{{usuario.nombres}}</td>
+                                                        <td>{{usuario.apellidos}}</td>
+                                                        <td>{{usuario.email}}</td>
                                                         <td style="text-align: center">
-                                                            <a href="/banda/{{banda.id}}" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-success" type="button">
+                                                            <a href="/usuario/{{usuario.id}}" style="text-decoration:none">
+                                                                <button class="btn btn-sm btn-primary" type="button">
                                                                     <i class="fa fa-eye"></i></button>
                                                             </a>
-                                                            <a href="/edit/banda/{{banda.id}}" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-warning" type="button">
-                                                                    <i class="fa fa-edit"></i></button>
-                                                            </a>
-                                                            <a href="/destroy/banda/{{banda.id}}" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-danger" type="button">
-                                                                    <i class="fa fa-trash"></i></button>
-                                                            </a>
-                                                            <a href="/bandas/{{banda.id}}/solicitar" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-info" type="button">
-                                                                    <i class="fa fa-user-plus"></i></button>
-                                                            </a>
-                                                            <a href="/banda/{{banda.id}}/calificar" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-info" type="button">
-                                                                    <i class="fa fa-star"></i></button>
+                                                            <a href="/usuario/{{id_banda}}/{{usuario.id}}/solicitar_banda" style="text-decoration:none">
+                                                                <button class="btn btn-sm btn-success" type="button">
+                                                                    <i class="fa fa-plus"></i></button>
                                                             </a>
                                                         </td>
                                                     </tr>

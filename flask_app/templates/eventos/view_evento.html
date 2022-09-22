@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Perfil Usuario</title>
+    <title>Perfil Evento</title>
     <link href="/static/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -17,7 +17,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
-    <script src="/static/js/usuarios.js"></script>
+    <script src="/static/js/eventos.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -104,7 +104,7 @@
         </div>
         <div id="layoutSidenav_content">
             <main style="background: #f4f6fa">
-                <div ng-app="music_events" ng-controller="UsuarioCtrl">
+                <div ng-app="music_events" ng-controller="EventoCtrl">
                     <div class="container-fluid px-4">
                         <section style="background-color: #f4f5f7;">
                             <div class="container">
@@ -112,12 +112,12 @@
                                     <div class="col col-lg-12 my-4 mb-lg-0">
                                         <div class="card mb-3" style="border-radius: .5rem;">
                                             <div class="row g-0">
-                                                <div class="col-md-4 gradient-custom text-center text-white d-flex justify-content-center align-items-center"
+                                                <div class="col-md-4 gradient-custom-evento text-center text-white d-flex justify-content-center align-items-center"
                                                     style="flex-direction: column;"
                                                     style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-                                                    <img src= "{{url_for('display_image',filename= usuario.avatar)}}" 
-                                                        alt="{{usuario.avatar}}" class="img-fluid my-2" style="width: 30%;" />
-                                                    <h2> {{usuario.nombres}} {{usuario.apellidos}}</h2>
+                                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                                                        alt="Avatar" class="img-fluid my-2" style="width: 30%;" />
+                                                    <h2> {{evento.titulo}} </h2>
                                                     <h2>{{genero.nombre}}</h2>
                                                 </div>
                                                 <div class="col-md-8">
@@ -126,33 +126,39 @@
                                                         <hr class="mt-0 mb-4">
                                                         <div class="row pt-1">
                                                             <div class="col-12 mb-3">
-                                                                <h6>Identificación:</h6>
-                                                                <p class="text-muted">{{usuario.identificacion}}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row pt-1">
-                                                            <div class="col-6 mb-3">
-                                                                <h6>Email:</h6>
-                                                                <p class="text-muted">{{usuario.email}}</p>
-                                                            </div>
-                                                            <div class="col-6 mb-3">
-                                                                <h6>Celular:</h6>
-                                                                <p class="text-muted">{{usuario.celular}}</p>
+                                                                <h6>Dirección:</h6>
+                                                                <p class="text-muted">{{evento.direccion}}</p>
                                                             </div>
                                                         </div>
                                                         <div class="row pt-1">
                                                             <div class="col-12 mb-3">
-                                                                <h6>Dirección:</h6>
-                                                                <p class="text-muted">{{usuario.direccion}}</p>
+                                                                <h6>Fecha:</h6>
+                                                                <p class="text-muted">{{evento.fecha}}</p>
                                                             </div>
                                                         </div>
-                                                        <h6>Descripción</h6>
+                                                        <div class="row pt-1">
+                                        
+                                                            <div class="col-6 mb-3">
+                                                                <h6>Hora Inicio:</h6>
+                                                                <p class="text-muted">{{evento.hora_inicio}}</p>
+    
+                                                            </div>
+                                                            <div class="col-6 mb-3">
+                                                                <h6>Hora Fin:</h6>
+                                                                <p class="text-muted">{{evento.hora_fin}}</p>
+                                                            </div>
+                                                        </div>
+                                                        <h6>Tipo de Evento</h6>
                                                         <hr class="mt-0 mb-4">
                                                         <div class="row pt-1">
-                                                            <div class="col-12 mb-3">
+                                                            <div class="col-6 mb-3">
                                                                 <p class="text-muted">
-                                                                    {{usuario.descripcion}}
+                                                                    {{evento.opciones}}
                                                                 </p>
+                                                            </div>
+                                                            <div class="col-6 mb-3">
+                                                                <h6>Numero de integrantes:</h6>
+                                                                <p class="text-muted">{{evento.num_integrantes}}</p>
                                                             </div>
                                                         </div>
                                                         <h6>Instrumentos</h6>

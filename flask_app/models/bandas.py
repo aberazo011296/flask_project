@@ -15,16 +15,27 @@ class Bandas:
         self.created_at = db_data['created_at']
         self.updated_at = db_data['updated_at']
         self.genero_id = db_data['genero_id']
+        self.usuario_id = db_data['usuario_id']
 
     @classmethod
     def save(cls,data):
-        query = "INSERT INTO bandas (nombre, num_integrantes, video, avatar, celular, email, genero_id) VALUES (%(nombre)s,%(num_integrantes)s,%(video)s,%(avatar)s,%(celular)s,%(email)s,%(genero_id)s);"
+        query = "INSERT INTO bandas (nombre, num_integrantes, video, avatar, celular, email, genero_id,usuario_id) VALUES (%(nombre)s,%(num_integrantes)s,%(video)s,%(avatar)s,%(celular)s,%(email)s,%(genero_id)s,%(usuario_id)s);"
         return connectToMySQL(cls.db_name).query_db(query, data)
 
     @classmethod
     def get_all(cls):
         query = "SELECT * FROM bandas;"
         results =  connectToMySQL(cls.db_name).query_db(query)
+        all_bandas = []
+        for row in results:
+            print(row['nombre'])
+            all_bandas.append( cls(row) )
+        return all_bandas
+    
+    @classmethod
+    def get_all_by_user(cls, data):
+        query = "SELECT * FROM bandas WHERE usuario_id = %(id)s;"
+        results =  connectToMySQL(cls.db_name).query_db(query, data)
         all_bandas = []
         for row in results:
             print(row['nombre'])
@@ -39,11 +50,13 @@ class Bandas:
 
     @classmethod
     def update(cls, data):
-        query = "UPDATE bandas SET nombre=%(nombre)s, num_integrantes=%(num_integrantes)s, video=%(video)s, avatar=%(avatar)s, celular=%(celular)s,email=%(email)s, genero_id= %(genero_id)s WHERE id = %(id)s;"
+        query = "UPDATE bandas SET nombre=%(nombre)s, num_integrantes=%(num_integrantes)s, video=%(video)s, avatar=%(avatar)s, celular=%(celular)s,email=%(email)s, genero_id= %(genero_id)s,usuario_id = %(usuario_id)s WHERE id = %(id)s;"
         return connectToMySQL(cls.db_name).query_db(query,data)
     
     @classmethod
     def destroy(cls,data):
+        query = "DELETE FROM calificaciones_bandas WHERE banda_id = %(id)s;"
+        connectToMySQL(cls.db_name).query_db(query,data)
         query = "DELETE FROM bandas WHERE id = %(id)s;"
         return connectToMySQL(cls.db_name).query_db(query,data)
 
@@ -66,3 +79,33 @@ class Bandas:
             #is_valid = False
             #flash("Escoga un genero","banda")
         return is_valid
+
+    @classmethod
+    def get_all_by_user_ok(cls,data):
+        
+        query = "SELECT * FROM music_events.bandas WHERE id IN (SELECT banda_id FROM solicitudes_bandas WHERE usuario_id = %(id)s);"
+        results = connectToMySQL(cls.db_name).query_db(query,data)
+        
+        bandas = []
+        
+        if len(results) >= 1:
+            for row in results:
+                bandas.append(cls(row))
+            print(bandas)
+            
+        return bandas
+    
+    @classmethod
+    def get_all_by_user_new(cls,data):
+        
+        query = "SELECT * FROM music_events.bandas WHERE id NOT IN (SELECT banda_id FROM solicitudes_bandas WHERE usuario_id = %(id)s ) AND usuario_id != %(id)s;"
+        results = connectToMySQL(cls.db_name).query_db(query,data)
+        
+        bandas = []
+        
+        if len(results) >= 1:
+            for row in results:
+                bandas.append(cls(row))
+            print(bandas)
+            
+        return bandas

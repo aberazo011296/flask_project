@@ -2,6 +2,7 @@ from flask import render_template, redirect, session, request, flash, jsonify, m
 import json
 import os
 # import urllib.request
+import decimal
 from flask_app import app
 from flask_app.models.bandas import Bandas
 from flask_app.models.user import User
@@ -11,6 +12,7 @@ from flask_app.models.generos import Genero
 from flask_app.models.instrumentos import Instrumento
 from flask_app.models.instrumentos_usuarios import InstrumentoUsuario
 from werkzeug.utils import secure_filename
+from flask_app.models.calificaciones_bandas import CalificacionBanda
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
@@ -27,9 +29,21 @@ def banda():
     if 'user_id' not in session:
         return redirect('/logout')
     data = {
-        "id":session['user_id']
+        "id": session['user_id']
     }
-    return render_template('bandas/index.html',bandas=Bandas.get_all())
+    usuario = User.get_by_id(data)
+    data_rol = {
+        "id": usuario.rol_id
+    }
+    rol = Rol.get_one(data_rol).nombre
+    
+    if(rol != 'administrador'):
+        bandas=Bandas.get_all_by_user(data)
+        print(rol)
+    else:
+        bandas=Bandas.get_all()
+    
+    return render_template('bandas/index.html',bandas=bandas,rol=rol,user=usuario)
 
 @app.route('/new/banda')
 def new_banda():
@@ -69,7 +83,8 @@ def create_banda():
         "avatar": request.files["avatar"].filename,
         "celular": request.form["celular"],
         "email": request.form["email"],
-        "genero_id": request.form["genero_id"]
+        "genero_id": request.form["genero_id"],
+        "usuario_id": session["user_id"]
         
     }
     Bandas.save(data)
@@ -117,7 +132,7 @@ def update_banda():
         "email": request.form["email"],
         "genero_id": request.form["genero_id"],
         "id": int(request.form["id"]),
-        "user_id": session["user_id"]
+        "usuario_id": session["user_id"]
     }
     Bandas.update(data)
     return redirect('/bandas')
@@ -143,7 +158,39 @@ def show_banda(id):
     user_data = {
         "id":session['user_id']
     }
-    return render_template("bandas/view.html",banda=Bandas.get_one(data),user=User.get_by_id(user_data),generos=Genero.get_all())
+    resultado = CalificacionBanda.get_avg(data)
+    calificacion_promedio = 0
+    if(resultado[0]['promedio'] is not None):
+        round_num = resultado[0]['promedio']
+        calificacion_promedio = decimal.Decimal(round_num).quantize(decimal.Decimal('0'), rounding=decimal.ROUND_HALF_UP)
+        calificacion_promedio = int(calificacion_promedio)
+
+    return render_template("bandas/view.html",banda=Bandas.get_one(data),user=User.get_by_id(user_data),generos=Genero.get_all(),calificacion=calificacion_promedio)
+
+#--------------------CALIFICACION--------------------------------
+
+@app.route('/banda/<int:id>/calificar')
+def banda_calificar(id):
+    if 'user_id' not in session:
+        return redirect('/logout')
+    return render_template("bandas/rating_banda.html", id=id)
+
+@app.route('/calificar/banda/<id>', methods=['POST'])
+def calificar_banda(id):
+    
+    datos = json.loads(request.data)
+    
+    data = {
+        "banda_id": int(id),
+        "puntuacion" : datos['calificacion']
+    }
+    
+    CalificacionBanda.save(data)
+    
+    validacion = {
+        "message": "Comentario creado correctamente"
+    }
+    return make_response(validacion, 201)
 
 #imagenes:
 def allowed_file_bandas(filename):
