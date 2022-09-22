@@ -39,7 +39,8 @@ def crear_evento():
         "hora_inicio" : eventos['hora_inicio'],
         "hora_fin" : eventos['hora_fin'],
         "opciones" : eventos['opciones'],
-        "genero_id" : eventos['genero_id']
+        "genero_id" : eventos['genero_id'],
+        "usuario_id": int(session['user_id'])
     }
         
     id = Evento.save(data)
@@ -62,7 +63,8 @@ def envento_usuarios_solicitud(id):
         return redirect('/logout')
     
     data = {
-        "id": int(id)
+        "id": int(id),
+        "usuario_id": int(session['user_id'])
     }
 
     return render_template("solicitudes/index.html", id_evento=id, usuarios=User.get_all_sin_solicitud(data))

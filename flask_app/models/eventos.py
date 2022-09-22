@@ -19,7 +19,7 @@ class Evento:
 
     @classmethod
     def save(cls,data):
-        query = "INSERT INTO eventos (titulo, fecha, direccion, hora_inicio, hora_fin, opciones, genero_id) VALUES (%(titulo)s,%(fecha)s,%(direccion)s,%(hora_inicio)s,%(hora_fin)s,%(opciones)s,%(genero_id)s );"
+        query = "INSERT INTO eventos (titulo, fecha, direccion, hora_inicio, hora_fin, opciones, genero_id, usuario_id) VALUES (%(titulo)s,%(fecha)s,%(direccion)s,%(hora_inicio)s,%(hora_fin)s,%(opciones)s,%(genero_id)s,%(usuario_id)s );"
         return connectToMySQL(cls.db_destino).query_db(query, data)
 
     @classmethod
@@ -119,7 +119,7 @@ class Evento:
     @classmethod
     def get_all_by_user_new(cls,data):
         
-        query = "SELECT * FROM music_events.eventos WHERE id NOT IN (SELECT evento_id FROM solicitudes WHERE usuario_id = %(id)s);"
+        query = "SELECT * FROM music_events.eventos WHERE id NOT IN (SELECT evento_id FROM solicitudes WHERE usuario_id = %(id)s) AND usuario_id != %(id)s;"
         results = connectToMySQL(cls.db_destino).query_db(query,data)
         
         eventos = []

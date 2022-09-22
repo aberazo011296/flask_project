@@ -55,12 +55,12 @@ def editar_solicitud(evento_id,usuario_id):
     
     integrantes = Solicitud.get_all_by_evento(data_eventos)
     
-    if(int(num_integrantes) == int(integrantes)):
-        
+    if(int(num_integrantes) >= int(integrantes) and estado == 'aceptado'):
+        estado = 'cancelado (cupo)'
         data = {
             "evento_id": int(evento_id),
             "usuario_id": int(usuario_id),
-            "estado" : 'cancelado (cupo)'
+            "estado" : estado
         }
             
         Solicitud.update(data)

@@ -70,11 +70,13 @@
                             <br>
                             <div class="row my-1">
                                 <div>
+                                    {% if(rol == 'administrador') %}
                                     <a href="/usuarios/nuevo" style="text-decoration:none" style="float: right">
                                         <button class="btn btn-primary m-2" type="button">
                                             Nuevo
                                         </button>
                                     </a>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="row">
@@ -102,6 +104,7 @@
                                                                 <button class="btn btn-sm btn-success" type="button">
                                                                     <i class="fa fa-paste"></i></button>
                                                             </a>
+                                                            {% if(rol == 'administrador') %}
                                                             <a href="/usuario/{{usuario.id}}/editar" style="text-decoration:none">
                                                                 <button class="btn btn-sm btn-warning" type="button">
                                                                     <i class="fa fa-edit"></i></button>
@@ -110,6 +113,7 @@
                                                                 <button class="btn btn-sm btn-danger" type="button">
                                                                     <i class="fa fa-trash"></i></button>
                                                             </a>
+                                                            {% endif %}
                                                             <a href="/usuario/{{usuario.id}}/calificar" style="text-decoration:none">
                                                                 <button class="btn btn-sm btn-info" type="button">
                                                                     <i class="fa fa-star"></i></button>

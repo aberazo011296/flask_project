@@ -157,7 +157,11 @@ def get_usuarios():
     }
     rol = Rol.get_one(data_rol).nombre
     
-    usuarios=User.get_all(data)
+    if(rol == 'administrador'):
+        usuarios=User.get_all_adm()
+    else:
+        usuarios=User.get_all(data)
+    
 
     return render_template("usuarios/index.html",user=user,usuarios=usuarios,rol=rol)
 
@@ -176,7 +180,7 @@ def crear_usuario():
     validacion = json.loads(User.validate_usuario(usuario))
     
     if not validacion['valid']:
-        return make_response(jsonify(validacion), 201)
+        return make_response(jsonify(validacion), 400)
     
     data = {
         "identificacion" : usuario['identificacion'],
@@ -203,8 +207,6 @@ def crear_usuario():
             "usuario_id" : int(id)
         }
         InstrumentoUsuario.save(data)
-    
-    session['user_id'] = id
 
     validacion['message'] = "Usuario ingresado correctamente"
     return make_response(jsonify(validacion), 201)
