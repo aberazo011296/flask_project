@@ -140,14 +140,14 @@
                             </div>
                             <div class="form-group">
                                 <label>Avatar:</label>
-                                <input type="file" ng-model="usuario.avatar" placeholder="Ingrese Avatar" accept="image/png, image/gif, image/jpeg" required/>
+                                <input type="file" ng-model="usuario.avatar" placeholder="Ingrese Avatar" accept="image/png, image/gif, image/jpeg" onchange="angular.element(this).scope().SelectFile(event)"/>
                                 <div class="invalid-feedback">
                                     Campo requerido
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Video Presentación:</label>
-                                <input type="file" ng-model="usuario.video" placeholder="Ingrese Video" accept="video/mp4,video/x-m4v,video/*" required/>
+                                <input type="file" ng-model="usuario.video" placeholder="Ingrese Video" accept="video/mp4,video/x-m4v,video/*" onchange="angular.element(this).scope().SelectFileVideo(event)"/>
                                 <div class="invalid-feedback">
                                     Campo requerido
                                 </div>

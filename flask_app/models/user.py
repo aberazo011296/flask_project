@@ -31,7 +31,7 @@ class User:
         
     @classmethod
     def get_all(cls,data):
-        query = "SELECT * FROM usuarios WHERE id != %(id)s;"
+        query = "SELECT * FROM usuarios WHERE id != %(id)s AND rol_id != 1;"
         results = connectToMySQL(cls.db_name).query_db(query,data)
         usuarios = []
         
@@ -40,8 +40,18 @@ class User:
         return usuarios
     
     @classmethod
+    def get_all_adm(cls):
+        query = "SELECT * FROM usuarios"
+        results = connectToMySQL(cls.db_name).query_db(query)
+        usuarios = []
+        
+        for user in results:
+            usuarios.append( cls(user) )
+        return usuarios
+    
+    @classmethod
     def get_all_sin_solicitud(cls, data):
-        query = "SELECT * FROM usuarios WHERE id NOT IN(SELECT usuario_id FROM solicitudes WHERE evento_id = %(id)s);"
+        query = "SELECT * FROM usuarios WHERE id NOT IN(SELECT usuario_id FROM solicitudes WHERE evento_id = %(id)s) AND id != %(usuario_id)s AND rol_id != 1;"
         results = connectToMySQL(cls.db_name).query_db(query, data)
         usuarios = []
         
