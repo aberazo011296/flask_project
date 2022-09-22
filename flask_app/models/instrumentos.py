@@ -64,3 +64,17 @@ class Instrumento:
             flash("nombre debe tener al menos 3 characters","tramo")
             
         return is_valid
+
+    @classmethod
+    def get_instrumentos_evento(cls,data):
+        query = "SELECT instrumentos.id,instrumentos.nombre,instrumentos.categoria FROM instrumentos JOIN eventos_instrumentos ON instrumentos.id = eventos_instrumentos.instrumento_id JOIN eventos ON eventos.id = eventos_instrumentos.evento_id WHERE eventos.id = %(id)s;"
+        results = connectToMySQL(cls.db_destino).query_db(query, data)
+        
+        instrumentos = []
+        
+        if len(results) >= 1:
+            for row in results:
+                instrumentos.append(cls(row))
+            print(instrumentos)
+            
+        return instrumentos

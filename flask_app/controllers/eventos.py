@@ -1,5 +1,6 @@
 from flask import render_template, redirect, session, request, flash, jsonify, make_response
 import json
+import decimal
 from flask_app import app
 from flask_app.models.user import User
 from flask_app.models.eventos import Evento
@@ -7,6 +8,7 @@ from flask_app.models.roles import Rol
 from flask_app.models.generos import Genero
 from flask_app.models.instrumentos import Instrumento
 from flask_app.models.eventos_instrumentos import InstrumentoEvento
+from flask_app.models.calificaciones_eventos import CalificacionEvento
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
@@ -165,3 +167,54 @@ def eliminar_evento(id):
         }
     Evento.delete(data)
     return redirect ("/eventos")
+
+    #VER EVENTO
+
+@app.route('/eventos/<int:id>')
+def evento_ver(id):
+    if 'user_id' not in session:
+        return redirect('/logout')
+    
+    data = {
+            "id":id
+    }
+    evento=Evento.get_one(data)
+    
+    data_genero = {
+        "id":evento.genero_id
+    }
+    genero = Genero.get_one(data_genero)
+    
+    resultado = CalificacionEvento.get_avg(data)
+    calificacion_promedio = 0
+    if(resultado[0]['promedio'] is not None):
+        round_num = resultado[0]['promedio']
+        calificacion_promedio = decimal.Decimal(round_num).quantize(decimal.Decimal('0'), rounding=decimal.ROUND_HALF_UP)
+        calificacion_promedio = int(calificacion_promedio)
+    
+    return render_template("eventos/view_evento.html", id=id, instrumentos=Instrumento.get_instrumentos_evento(data), evento=evento, genero=genero, calificacion=calificacion_promedio)
+
+    #Calificar Evento
+
+@app.route('/eventos/<int:id>/calificar')
+def evento_calificar(id):
+    if 'user_id' not in session:
+        return redirect('/logout')
+    return render_template("eventos/rating_evento.html", id=id)
+
+@app.route('/calificar/evento/<id>', methods=['POST'])
+def calificar_evento(id):
+    
+    datos = json.loads(request.data)
+    
+    data = {
+        "evento_id": int(id),
+        "puntuacion" : datos['calificacion']
+    }
+    
+    CalificacionEvento.save(data)
+    
+    validacion = {
+        "message": "Comentario creado correctamente"
+    }
+    return make_response(validacion, 201)
