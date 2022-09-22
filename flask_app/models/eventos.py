@@ -66,6 +66,8 @@ class Evento:
         
     @classmethod
     def delete(cls, data):
+        query  = "DELETE FROM calificaciones_eventos WHERE evento_id = %(evento_id)s"
+        connectToMySQL(cls.db_destino).query_db( query, data )
         query  = "DELETE FROM eventos_instrumentos WHERE evento_id = %(evento_id)s"
         connectToMySQL(cls.db_destino).query_db( query, data )
         query  = "DELETE FROM solicitudes WHERE evento_id = %(evento_id)s"
