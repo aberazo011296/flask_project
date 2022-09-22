@@ -45,7 +45,8 @@ def create_banda():
         "avatar": request.form["avatar"],
         "celular": request.form["celular"],
         "email": request.form["email"],
-        "genero_id": request.form["genero_id"]
+        "genero_id": request.form["genero_id"],
+        "usuario_id": session["user_id"]
         
     }
     Bandas.save(data)
@@ -80,7 +81,7 @@ def update_banda():
         "email": request.form["email"],
         "genero_id": request.form["genero_id"],
         "id": int(request.form["id"]),
-        "user_id": session["user_id"]
+        "usuario_id": session["user_id"]
     }
     Bandas.update(data)
     return redirect('/bandas')
