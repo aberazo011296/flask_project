@@ -1,5 +1,7 @@
-from flask import render_template, redirect, session, request, flash, jsonify, make_response
+from flask import render_template, redirect, session, request, flash, jsonify, make_response, url_for
 import json
+import os
+# import urllib.request
 from flask_app import app
 from flask_app.models.bandas import Bandas
 from flask_app.models.user import User
@@ -8,9 +10,16 @@ from flask_app.models.roles import Rol
 from flask_app.models.generos import Genero
 from flask_app.models.instrumentos import Instrumento
 from flask_app.models.instrumentos_usuarios import InstrumentoUsuario
+from werkzeug.utils import secure_filename
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 app.secret_key = 'keep it secret, keep it safe'
+
+UPLOAD_FOLDER = 'flask_app/static/imgs/'
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif']) #ya esta en el front/no
 
 
 @app.route('/bandas')
@@ -38,11 +47,26 @@ def create_banda():
         return redirect('/logout')
     if not Bandas.validate_banda(request.form):
         return redirect('/new/banda')
+    
+    if 'avatar' not in request.files:
+        flash('No file part')
+
+    file = request.files['avatar']
+    if file.filename == '':
+        flash ('No hay imagen selecionada para subir')
+
+    if file and allowed_file_bandas (file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    else:
+        flash('Imagenes aceptadas - png, etc')
+
     data = {
         "nombre": request.form["nombre"],
         "num_integrantes": request.form["num_integrantes"],
-        "video": request.form["video"],
-        "avatar": request.form["avatar"],
+        "video": request.files["video"].filename,
+        "avatar": request.files["avatar"].filename,
         "celular": request.form["celular"],
         "email": request.form["email"],
         "genero_id": request.form["genero_id"]
@@ -70,12 +94,25 @@ def update_banda():
         return redirect('/logout')
     if not Bandas.validate_banda(request.form):
         return redirect('/new/banda')
-    data = {
 
+    if 'avatar' not in request.files:
+        flash('No file part')
+
+    file = request.files['avatar']
+    if file.filename == '':
+        flash ('No hay imagen selecionada para subir')
+
+    if file and allowed_file_bandas (file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    else:
+        flash('Imagenes aceptadas - png, etc')
+    data = {
         "nombre": request.form["nombre"],
         "num_integrantes": request.form["num_integrantes"],
-        "video": request.form["video"],
-        "avatar": request.form["avatar"],
+        "avatar": request.files["avatar"].filename,
+        "video": request.files["video"].filename,
         "celular": request.form["celular"],
         "email": request.form["email"],
         "genero_id": request.form["genero_id"],
@@ -108,3 +145,10 @@ def show_banda(id):
     }
     return render_template("bandas/view.html",banda=Bandas.get_one(data),user=User.get_by_id(user_data),generos=Genero.get_all())
 
+#imagenes:
+def allowed_file_bandas(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/display_bandas/<filename>')
+def display_image_bandas(filename):
+    return redirect(url_for('static', filename = 'imgs/' + filename), code=301)
