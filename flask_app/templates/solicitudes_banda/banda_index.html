@@ -6,12 +6,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Dashboard</title>
+        <title>Solicitudes</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="/static/css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/static/js/solicitudes_bandas.js"></script> 
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -37,10 +41,6 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
                             </a>
-                            <a class="nav-link" href="/dashboard_bandas">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Dashboard Bandas
-                            </a>
                             <a class="nav-link" href="/usuarios">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
                                 Usuarios
@@ -57,7 +57,7 @@
                                 <div class="sb-nav-link-icon"><i class="fa fa-bell"></i></div>
                                 Solicitudes
                             </a>
-                            <a class="nav-link" href="/solicitudes_bandas">
+                            <a class="nav-link" href="/solicitudes">
                                 <div class="sb-nav-link-icon"><i class="fa fa-bell"></i></div>
                                 Solicitudes Bandas
                             </a>
@@ -71,56 +71,86 @@
             </div>
             <div id="layoutSidenav_content">
                 <main>
-                    <div ng-app="music_events" ng-controller="bandaCtrl">
+                    <div ng-app="music_events" ng-controller="SolicitudCtrl">
                         <div class="container-fluid px-4">
-                            <h1 class="mt-4">Bandas</h1>
+                            <h1 class="mt-4">Solicitudes Banda (Músico)</h1>
                             <br>
-                            <div class="row my-1">
-                                <div>
-                                    <a href="/new/banda" style="text-decoration:none" style="float: right">
-                                        <button class="btn btn-primary m-2" type="button">
-                                            Nueva Banda
-                                        </button>
-                                    </a>
-                                </div>
-                            </div>
                             <div class="row">
                                 <div class="card mb-4">
                                     <div class="card-body">
-                                        <table id="datatablesSimple">
+                                        <table class="table table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Nombre:</th>
-                                                    <th>Numero de integrantes</th>
+                                                    <th>Nombre</th>
+                                                    <th>Numero de Integrantes</th>
                                                     <th>Celular</th>
                                                     <th>Email</th>
+                                                    <th>Estado</th>
                                                     <th>Opciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for banda in bandas %}
+                                                {% for solicitud in solicitudes_musico %}
                                                     <tr>
-                                                        <td>{{banda.nombre}}</td>
-                                                        <td>{{banda.num_integrantes}}</td>
-                                                        <td>{{banda.celular}}</td>
-                                                        <td>{{banda.email}}</td>
+                                                        <td>{{solicitud.nombre}}</td>
+                                                        <td>{{solicitud.num_integrantes}}</td>
+                                                        <td>{{solicitud.celular}}</td>
+                                                        <td>{{solicitud.email}}</td>
+                                                        <td>{{solicitud.estado}}</td>
+                                                        
                                                         <td style="text-align: center">
-                                                            <a href="/banda/{{banda.id}}" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-success" type="button">
-                                                                    <i class="fa fa-paste"></i></button>
-                                                            </a>
-                                                            <a href="/edit/banda/{{banda.id}}" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-warning" type="button">
-                                                                    <i class="fa fa-edit"></i></button>
-                                                            </a>
-                                                            <a href="/destroy/banda/{{banda.id}}" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-danger" type="button">
-                                                                    <i class="fa fa-trash"></i></button>
-                                                            </a>
-                                                            <a href="/bandas/{{banda.id}}/solicitar" style="text-decoration:none">
+                                                            <a href="/banda/{{solicitud.banda_id}}" style="text-decoration:none">
                                                                 <button class="btn btn-sm btn-info" type="button">
-                                                                    <i class="fa fa-user-plus"></i></button>
+                                                                    Ver Banda</button>
                                                             </a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <h1 class="mt-4">Solicitudes (Creador Banda)</h1>
+                            <br>
+                            <div class="row">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Numero de Integrantes</th>
+                                                    <th>Celular</th>
+                                                    <th>Email</th>
+                                                    <th>Estado</th>
+                                                    <th>Opciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for solicitud in solicitudes_creador_bandas %}
+                                                    <tr>
+                                                        <td>{{solicitud.nombre}}</td>
+                                                        <td>{{solicitud.num_integrantes}}</td>
+                                                        <td>{{solicitud.celular}}</td>
+                                                        <td>{{solicitud.email}}</td>
+                                                        <td>{{solicitud.estado}}</td>
+                                                        <td style="text-align: center">
+                                                            <a href="/usuario/{{solicitud.usuario_id}}" style="text-decoration:none">
+                                                                <button class="btn btn-sm btn-info" type="button">
+                                                                    Ver Usuario</button>
+                                                            </a>
+                                                            {% if (solicitud.estado == 'pendiente') %}
+                                                                <a ng-click="update({{solicitud.banda_id}},{{solicitud.usuario_id}},'aceptado',{{solicitud.num_integrantes}})" style="text-decoration:none">
+                                                                    <button class="btn btn-sm btn-success" type="button">
+                                                                        <i class="fa fa-check"></i></button>
+                                                                </a>
+                                                                <a ng-click="update({{solicitud.banda_id}},{{solicitud.usuario_id}},'cancelado',{{solicitud.num_integrantes}})" style="text-decoration:none">
+                                                                    <button class="btn btn-sm btn-danger" type="button">
+                                                                        <i class="fa fa-times"></i></button>
+                                                                </a>
+                                                            {% endif %}
                                                         </td>
                                                     </tr>
                                                 {% endfor %}
