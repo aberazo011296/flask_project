@@ -85,6 +85,10 @@ class User:
     
     @classmethod
     def delete(cls, data):
+        query3  = "DELETE FROM calificaciones_usuarios WHERE usuario_id = %(id)s"
+        connectToMySQL(cls.db_name).query_db( query3, data)
+        query2  = "DELETE FROM solicitudes WHERE usuario_id = %(id)s"
+        connectToMySQL(cls.db_name).query_db( query2, data)
         query1  = "DELETE FROM instrumentos_usuarios WHERE usuario_id = %(id)s"
         connectToMySQL(cls.db_name).query_db(query1, data)
         query  = "DELETE FROM usuarios WHERE id = %(id)s"
@@ -272,7 +276,7 @@ class User:
             status = 'error'
             code = 400
         
-        if (user['password'] != ''):
+        if ('password' in user and user['password'] != ''):
             if not re.search(PASSWORD_REGEX, user['password']):
                 mensaje = "Contraseña debe tener números, letras mayúsculas y minúculas, caracteres especiales"
                 is_valid=False

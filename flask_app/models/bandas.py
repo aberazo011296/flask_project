@@ -55,6 +55,8 @@ class Bandas:
     
     @classmethod
     def destroy(cls,data):
+        query = "DELETE FROM solicitudes_bandas WHERE banda_id = %(id)s;"
+        connectToMySQL(cls.db_name).query_db(query,data)
         query = "DELETE FROM calificaciones_bandas WHERE banda_id = %(id)s;"
         connectToMySQL(cls.db_name).query_db(query,data)
         query = "DELETE FROM bandas WHERE id = %(id)s;"

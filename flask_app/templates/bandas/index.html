@@ -10,7 +10,6 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="/static/css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
     <body class="sb-nav-fixed">
@@ -125,9 +124,9 @@
                                                         <td>{{banda.num_integrantes}}</td>
                                                         <td>{{banda.celular}}</td>
                                                         <td>{{banda.email}}</td>
-                                                        <td style="text-align: center">
+                                                        <td style="text-align: center;" class="d-flex justify-content-between">
                                                             <a href="/banda/{{banda.id}}" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-success" type="button">
+                                                                <button class="btn btn-sm btn-info" type="button">
                                                                     <i class="fa fa-eye"></i></button>
                                                             </a>
                                                             <a href="/edit/banda/{{banda.id}}" style="text-decoration:none">
@@ -139,7 +138,7 @@
                                                                     <i class="fa fa-trash"></i></button>
                                                             </a>
                                                             <a href="/bandas/{{banda.id}}/solicitar" style="text-decoration:none">
-                                                                <button class="btn btn-sm btn-info" type="button">
+                                                                <button class="btn btn-sm btn-success" type="button">
                                                                     <i class="fa fa-user-plus"></i></button>
                                                             </a>
                                                             <a href="/banda/{{banda.id}}/calificar" style="text-decoration:none">

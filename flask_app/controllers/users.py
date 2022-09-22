@@ -1,6 +1,9 @@
 from flask import render_template, redirect, session, request, flash, jsonify, make_response, url_for
 from flask_mail import Mail, Message
 import os
+import base64
+from io import BytesIO
+from PIL import Image
 # import urllib.request
 import json
 import decimal 
@@ -89,7 +92,7 @@ def create_user():
         "fecha_nacimiento" : request.form['fecha_nacimiento'],
         "nacionalidad" : request.form['nacionalidad'],
         "avatar" : request.files['avatar'].filename,
-        "video" : request.files['video'].filename,
+        "video" : '',
         "rol_id" : request.form['rol_id'],
         "genero_id" : request.form['genero_id']
     }
@@ -182,6 +185,11 @@ def crear_usuario():
     if not validacion['valid']:
         return make_response(jsonify(validacion), 400)
     
+    image_data = bytes(usuario['avatar'], encoding="ascii")
+    im = Image.open(BytesIO(base64.b64decode(image_data)))
+    rgb_im = im.convert('RGB')
+    rgb_im.save('flask_app/static/imgs/'+ usuario['avatar_filename'])
+    
     data = {
         "identificacion" : usuario['identificacion'],
         "nombres" : usuario['nombres'],
@@ -193,8 +201,8 @@ def crear_usuario():
         "celular" : usuario['celular'],
         "fecha_nacimiento" : usuario['fecha_nacimiento'],
         "nacionalidad" : usuario['nacionalidad'],
-        "avatar" : usuario['avatar'],
-        "video" : usuario['video'],
+        "avatar" : usuario['avatar_filename'],
+        "video" : '',
         "rol_id" : usuario['rol_id'],
         "genero_id" : usuario['genero_id']
     }
@@ -281,7 +289,7 @@ def editar_usuario(id):
     if not validacion['valid']:
         return make_response(jsonify(validacion), 400)
     
-    if(usuario['password'] != ''):
+    if('password' in usuario and usuario['password'] != ''):
         usuario['password'] = bcrypt.generate_password_hash(usuario['password'])
     else:
         data = {
@@ -290,6 +298,21 @@ def editar_usuario(id):
         usuario_pass = User.get_by_id(data)
         usuario['password'] = usuario_pass.password
         usuario['confirm'] = usuario_pass.password
+    
+    if('avatar_filename' in usuario and usuario['avatar_filename'] != ''):
+        image_data = bytes(usuario['avatar'], encoding="ascii")
+        im = Image.open(BytesIO(base64.b64decode(image_data)))
+        rgb_im = im.convert('RGB')
+        rgb_im.save('flask_app/static/imgs/'+ usuario['avatar_filename'])
+    else:
+        data = {
+            "id":int(id)
+        }
+        usuario_pass = User.get_by_id(data)
+        usuario['avatar_filename'] = usuario_pass.avatar
+        
+    if('video_filename' not in usuario):
+        usuario['video_filename'] = ''
     
     data = {
         "id": int(id),
@@ -303,8 +326,8 @@ def editar_usuario(id):
         "celular" : usuario['celular'],
         "fecha_nacimiento" : usuario['fecha_nacimiento'],
         "nacionalidad" : usuario['nacionalidad'],
-        "avatar" : usuario['avatar'],
-        "video" : usuario['video'],
+        "avatar" : usuario['avatar_filename'],
+        "video" : '',
         "rol_id" : usuario['rol_id'],
         "genero_id" : usuario['genero_id']
     }
