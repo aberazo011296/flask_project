@@ -104,4 +104,39 @@ app.controller('EventoCtrl', function ($scope, $http) {
             toastr.error("Ocurrió un error");
         });
     };
+
+    $scope.calificar = function (posicion) {
+        console.log(posicion)
+        for (var i = 1; i < posicion + 1; i++){
+            var estrella = document.getElementById("star"+i);
+            estrella.classList.add("checked-stars");
+        }
+
+        for (var i = posicion+1; i < 6; i++){
+            var estrella = document.getElementById("star"+i);
+            estrella.classList.remove("checked-stars");
+        }
+
+        $scope.calificacion = posicion;
+        
+    };
+
+    $scope.rating = function (id) {
+        $http({
+            method: 'POST',
+            url: $scope.api_server + 'calificar/evento/'+id,
+            data: {
+                calificacion: $scope.calificacion
+            }
+        }).then(function successCallback(response) {
+
+            toastr.success(response.data.message);
+            setTimeout(function () {
+                window.location.href = $scope.api_server+'eventos';
+            }, 2000);
+
+        }, function errorCallback(response) {
+            toastr.error("Ocurrió un error");
+        });
+    }
 });
