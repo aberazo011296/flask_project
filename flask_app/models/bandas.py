@@ -96,7 +96,7 @@ class Bandas:
     @classmethod
     def get_all_by_user_new(cls,data):
         
-        query = "SELECT * FROM music_events.bandas WHERE id NOT IN (SELECT banda_id FROM solicitudes_bandas WHERE usuario_id = %(id)s);"
+        query = "SELECT * FROM music_events.bandas WHERE id NOT IN (SELECT banda_id FROM solicitudes_bandas WHERE usuario_id = %(id)s ) AND usuario_id != %(id)s;"
         results = connectToMySQL(cls.db_name).query_db(query,data)
         
         bandas = []
