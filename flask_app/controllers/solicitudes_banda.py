@@ -55,7 +55,7 @@ def editar_solicitud_banda(banda_id,usuario_id):
     
     integrantes = Solicitud_Banda.get_all_by_banda(data_bandas)
     
-    if(int(num_integrantes) == int(integrantes)):
+    if( int(integrantes) >  int(num_integrantes) and estado == 'aceptado'):
         
         data = {
             "banda_id": int(banda_id),
@@ -270,7 +270,18 @@ def banda_usuarios_solicitud(id):
         return redirect('/logout')
     
     data = {
-        "id": int(id)
+        "id": int(id),
+        'usuario_id':session['user_id']
     }
+    
+    data_user={
+        'id':session['user_id']
+    }
+    user=User.get_by_id(data_user)
 
-    return render_template("solicitudes_banda/index.html", id_banda=id, usuarios=User.get_all_sin_solicitud_bandas(data))
+    data_rol={
+        'id':user.rol_id
+    }
+    rol=Rol.get_one(data_rol).nombre
+
+    return render_template("solicitudes_banda/index.html", id_banda=id, usuarios=User.get_all_sin_solicitud_bandas(data),user=user,rol=rol)

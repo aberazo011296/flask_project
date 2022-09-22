@@ -15,7 +15,19 @@ app.secret_key = 'keep it secret, keep it safe'
 
 @app.route("/eventos")
 def eventos():
-    return render_template ("eventos/index_eventos.html", eventos=Evento.get_all())
+    data={
+        'id':session['user_id']
+    }
+    user=User.get_by_id(data)
+    data_rol={
+        'id':user.rol_id
+    }
+    rol=Rol.get_one(data_rol).nombre
+    if rol== "administrador":
+        eventos=Evento.get_all()
+    else:
+        eventos=Evento.get_all_evento(data)
+    return render_template ("eventos/index_eventos.html", eventos=eventos,user=user,rol=rol)
 
 @app.route("/eventos/nuevo")
 def eventos_nuevo():
@@ -69,8 +81,16 @@ def envento_usuarios_solicitud(id):
         "id": int(id),
         "usuario_id": int(session['user_id'])
     }
+    data_user={
+        'id':session['user_id']
+    }
+    user=User.get_by_id(data_user)
+    data_rol={
+        'id':user.rol_id
+    }
+    rol=Rol.get_one(data_rol).nombre
 
-    return render_template("solicitudes/index.html", id_evento=id, usuarios=User.get_all_sin_solicitud(data))
+    return render_template("solicitudes/index.html", id_evento=id, usuarios=User.get_all_sin_solicitud(data),user=user,rol=rol)
 
     #EDIT.......
 
