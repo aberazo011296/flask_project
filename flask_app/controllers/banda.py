@@ -34,7 +34,7 @@ def banda():
     else:
         bandas=Bandas.get_all()
     
-    return render_template('bandas/index.html',bandas=bandas)
+    return render_template('bandas/index.html',bandas=bandas,rol=rol,user=usuario)
 
 @app.route('/new/banda')
 def new_banda():
